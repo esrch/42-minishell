@@ -1,26 +1,29 @@
 #include "lexer.h"
 
-bool	lexer_is_at_end(t_lexer *lexer)
+bool	lexer_is_whitespace(char c)
 {
-	return (lexer->source[lexer->current] == 0);
+	return (c == ' ' || c == '\t' || c == '\n');
 }
 
-char	lexer_advance(t_lexer *lexer)
+bool	lexer_is_metacharacter(char c)
 {
-	return (lexer->source[lexer->current++]);
+	return (
+		c == ' '
+		|| c == '\t'
+		|| c == '\n'
+		|| c == '|'
+		|| c == '&'
+		|| c == ';'
+		|| c == '('
+		|| c == ')'
+		|| c == '<'
+		|| c == '>');
 }
 
-char	lexer_peek(t_lexer *lexer)
+t_token_list	*lexer_error(t_token_list *token_list, char *msg)
 {
-	return (lexer->source[lexer->current]);
-}
-
-bool	lexer_match(t_lexer *lexer, char expected)
-{
-	if (lexer_is_at_end(lexer))
-		return (false);
-	if (lexer_peek(lexer) != expected)
-		return (false);
-	lexer->current++;
-	return (true);
+	if (msg)
+		printf("%s", msg);
+	token_list_clear(&token_list);
+	return (NULL);
 }

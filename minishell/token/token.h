@@ -4,6 +4,8 @@
 # include <stdlib.h>
 # include <stdio.h>
 
+# include "../libft/libft.h"
+
 typedef enum s_token_type
 {
 	T_WORD,
