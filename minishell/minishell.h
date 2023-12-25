@@ -6,4 +6,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-#endif /* MINISHELL_H*/
+# include "token/token.h"
+# include "lexer/lexer.h"
+
+#endif /* MINISHELL_H */

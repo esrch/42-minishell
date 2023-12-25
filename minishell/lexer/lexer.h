@@ -2,6 +2,7 @@
 # define LEXEME_H
 
 # include <stdbool.h>
+# include <stdio.h>
 
 # include "../token/token.h"
 
@@ -14,12 +15,19 @@ typedef struct s_lexer
 }	t_lexer;
 
 // Lexer.
-void	lexer_init(t_lexer *lexer, char *source);
+t_token_list	*lexer_scan(char *source);
+
+// Lexer word.
+int				scan_word(t_lexer *lexer);
 
 // Lexer utils.
-bool	is_at_end(t_lexer *lexer);
-char	advance(t_lexer *lexer);
-char	peek(t_lexer *lexer);
-bool	match(t_lexer *lexer, char expected);
+bool			lexer_is_at_end(t_lexer *lexer);
+char			lexer_advance(t_lexer *lexer);
+char			lexer_peek(t_lexer *lexer);
+bool			lexer_match(t_lexer *lexer, char expected);
+bool			lexer_is_whitespace(char c);
+bool			lexer_is_metacharacter(char c);
+t_token_list	*lexer_error(t_lexer *lexer);
+char			*lexer_extract_lexeme(t_lexer *lexer);
 
 #endif /* LEXEME_H */

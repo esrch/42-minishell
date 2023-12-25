@@ -1,7 +1,7 @@
 NAME = minishell
 
 TOKEN_SRCS = $(addprefix token/, token.c token_list.c)
-LEXER_SRCS = $(addprefix lexer/, lexer.c lexer_utils.c)
+LEXER_SRCS = $(addprefix lexer/, lexer.c lexer_word.c lexer_utils.c lexer_utils2.c)
 OTHER_SRCS = main.c
 SRCS = $(TOKEN_SRCS) $(LEXER_SRCS) $(OTHER_SRCS)
 
