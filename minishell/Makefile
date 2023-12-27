@@ -10,14 +10,15 @@ OBJS = $(SRCS:.c=.o)
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-LIBFLAGS = -lreadline -lhistory -Llibft -lft
+LDFLAGS = -Llibft
+LDLIBS = -lreadline -lhistory -lft
 SANITIZE_FLAGS = -g3 -fsanitize=address
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(MAKE) -C libft
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBFLAGS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 clean:
 	$(MAKE) -C libft clean
@@ -30,7 +31,7 @@ fclean:
 
 re: fclean all
 
-sanitize: fclean $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBFLAGS) $(SANITIZE_FLAGS) 
+sanitize: CFLAGS += $(SANITIZE_FLAGS)
+sanitize: fclean $(NAME)
 
 .PHONY: all clean fclean re sanitize
