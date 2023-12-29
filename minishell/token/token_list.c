@@ -27,12 +27,32 @@ int	token_list_add(t_token_list **token_list, t_token *token)
 int	token_list_add_token_type(t_token_list **token_list,
 	t_token_type token_type)
 {
-	return (token_list_add(token_list, token_construct(token_type, NULL, NULL)));
+	t_token	*token;
+
+	token = token_construct(token_type, NULL, NULL);
+	if (!token)
+		return (-1);
+	if (token_list_add(token_list, token) < 0)
+	{
+		token_destruct(token);
+		return (-1);
+	}
+	return (0);
 }
 
-int	token_list_add_word(t_token_list **token_list, char *lexeme)
+int	token_list_add_word(t_token_list **token_list, char *lexeme, char *value)
 {
-	return (token_list_add(token_list, token_construct(T_WORD, lexeme, NULL)));
+	t_token	*token;
+
+	token = token_construct(T_WORD, lexeme, value);
+	if (!token)
+		return (-1);
+	if (token_list_add(token_list, token) < 0)
+	{
+		token_destruct(token);
+		return (-1);
+	}
+	return (0);
 }
 
 void	token_list_clear(t_token_list **token_list)

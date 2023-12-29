@@ -44,7 +44,8 @@ void	token_print(t_token *token);
 int		token_list_add(t_token_list **token_list, t_token *token);
 int		token_list_add_token_type(t_token_list **token_list,
 			t_token_type token_type);
-int		token_list_add_word(t_token_list **token_list, char *lexeme);
+int		token_list_add_word(t_token_list **token_list, char *lexeme,
+			char *value);
 void	token_list_clear(t_token_list **token_list);
 void	token_list_print(t_token_list *token_list);
 

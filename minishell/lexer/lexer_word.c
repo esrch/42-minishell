@@ -28,7 +28,7 @@ int	scan_word_token(t_char_lexer *lexer, t_token_list **token_list)
 		printf("Error adding lexeme.\n");
 		return (-1);
 	}
-	return (token_list_add_word(token_list, lexeme));
+	return (token_list_add_word(token_list, lexeme, NULL));
 }
 
 static int	consume_double_quote_string(t_char_lexer *lexer)

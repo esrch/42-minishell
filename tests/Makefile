@@ -1,11 +1,11 @@
 BASE_FOLDER = ../minishell/
 ASSERT_OBJS = assert/assert.o
-DEPENDENCY_FOLDERS = token char_lexer lexer param_expander
+DEPENDENCY_FOLDERS = token char_lexer lexer param_expander word_split
 DEPENDENCY_SRCS = $(wildcard $(patsubst %, $(BASE_FOLDER)%/*.c, $(DEPENDENCY_FOLDERS)))
 DEPENDENCY_OBJS = $(patsubst %.c, %.o, $(DEPENDENCY_SRCS))
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address
 LDFLAGS = -L.
 LDLIBS = -lreadline -lhistory -lft
 
