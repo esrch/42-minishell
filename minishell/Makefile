@@ -1,11 +1,17 @@
 NAME = minishell
 
-TOKEN_SRCS = $(addprefix token/, token.c token_list.c)
-CHAR_LEXER_SRCS = $(addprefix char_lexer/, char_lexer.c char_lexer2.c char_lexer3.c)
-LEXER_SRCS = $(addprefix lexer/, lexer.c lexer_word.c lexer_utils.c)
-OTHER_SRCS = main.c
-SRCS = $(TOKEN_SRCS) $(CHAR_LEXER_SRCS) $(LEXER_SRCS) $(OTHER_SRCS)
-
+SRC_FOLDER = src/
+SRC_FILES = \
+	main.c \
+	$(addprefix token/, token.c token_utils.c) \
+	$(addprefix token_list/, token_list.c) \
+	wildcard_match.c \
+	char_tokenizer.c char_tokenizer2.c char_tokenizer3.c \
+	filename_expansion.c \
+	param_expander.c \
+	tokenizer.c tokenizer_word.c tokenizer_utils.c \
+	word_split.c
+SRCS = $(addprefix $(SRC_FOLDER, $(SRC_FILES)))
 OBJS = $(SRCS:.c=.o)
 
 CC = cc
