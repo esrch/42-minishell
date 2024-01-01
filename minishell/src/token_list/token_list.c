@@ -43,20 +43,18 @@ t_token_list	*token_list_last(t_token_list *token_list)
 	return (last_node);
 }
 
-void	token_list_insert(t_token_list **token_list, t_token_list *insertion)
+t_token_list	*token_list_at(t_token_list *token_list, int index)
 {
-	t_token_list	*next;
-	t_token_list	*last;
+	int				i;
+	t_token_list	*current;
 
-	if (!insertion)
-		return ;
-	if (!*token_list)
-	{
-		*token_list = insertion;
-		return ;
-	}
-	next = (*token_list)->next;
-	(*token_list)->next = insertion;
-	last = token_list_last(insertion);
-	last->next = next;
+	if (!token_list)
+		return (NULL);
+	if (index < 0)
+		return (NULL);
+	i = 0;
+	current = token_list;
+	while (current && i++ < index)
+		current = current->next;
+	return (current);
 }

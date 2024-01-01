@@ -124,6 +124,31 @@ void	test_token_list_last(void)
 	token_list_clear(&token_list);
 }
 
+void	test_token_list_at(void)
+{
+	t_token_list	*token_list;
+
+	token_list = NULL;
+
+	token_list_add_op(&token_list, T_AND_AND);
+	token_list_add_op(&token_list, T_GREAT);
+	token_list_add_op(&token_list, T_LESS);
+
+	assert_section("Index of NULL list");
+	assert_null("Returns NULL", token_list_at(NULL, 0));
+
+	assert_section("Negative index");
+	assert_null("Returns NULL", token_list_at(token_list, -1));
+
+	assert_section("Correct index");
+	assert_int_eq("Returns index 0", T_AND_AND, token_list_at(token_list, 0)->token->type);
+	assert_int_eq("Returns index 1", T_GREAT, token_list_at(token_list, 1)->token->type);
+	assert_int_eq("Returns index 2", T_LESS, token_list_at(token_list, 2)->token->type);
+
+	assert_section("Index beyond list");
+	assert_null("Returns NULL", token_list_at(token_list, 3));
+}
+
 void	test_token_list_insert(void)
 {
 	t_token_list	*original;
@@ -248,6 +273,7 @@ int	main(void)
 	test_suite_add_test(&test_suite, "Token list del", test_token_list_del);
 	test_suite_add_test(&test_suite, "Token list clear", test_token_list_clear);
 	test_suite_add_test(&test_suite, "Token list last", test_token_list_last);
+	test_suite_add_test(&test_suite, "Token list at", test_token_list_at);
 	test_suite_add_test(&test_suite, "Token list insert", test_token_list_insert);
 	test_suite_add_test(&test_suite, "Token list remove after", test_token_list_remove_after);
 	test_suite_add_test(&test_suite, "Token list replace", test_token_list_replace_after);

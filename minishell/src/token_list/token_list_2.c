@@ -1,5 +1,23 @@
 #include "_minishell.h"
 
+void	token_list_insert(t_token_list **token_list, t_token_list *insertion)
+{
+	t_token_list	*next;
+	t_token_list	*last;
+
+	if (!insertion)
+		return ;
+	if (!*token_list)
+	{
+		*token_list = insertion;
+		return ;
+	}
+	next = (*token_list)->next;
+	(*token_list)->next = insertion;
+	last = token_list_last(insertion);
+	last->next = next;
+}
+
 void	token_list_remove_after(t_token_list *token_list, int count)
 {
 	int				remove_count;
