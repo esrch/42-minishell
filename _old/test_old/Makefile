@@ -1,6 +1,4 @@
 # Options
-# add valgrind=1 to launch with valgrind
-
 ifeq ($(valgrind), 1)
 VALGRIND_PREFIX := valgrind -- 
 endif
@@ -18,11 +16,11 @@ OBJS = $(SRCS:.c=.o)
 TEST_DIRS = $(shell find tests -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I../minishell/inc -Iinc
+CFLAGS = -Wall -Wextra -Werror -I../minishell/includes -Iinc
 LDFLAGS = -Llibs
 LDLIBS = -lreadline -lhistory -lft -ltest_utils
 
-.PHONY: all clean update-libs
+.PHONY: all clean
 
 all: NO_CLEAN = 1
 all: $(TEST_DIRS) clean
@@ -39,15 +37,6 @@ $(TEST_DIRS): %: $$(patsubst .c,.o,$$(wildcard tests/$$*/*.c)) $(OBJS) # $(TEST_
 
 clean:
 	$(RM) $(OBJS)
-
-update-libs:
-	$(MAKE) -C ../minishell/libs/libft
-	cp ../minishell/libs/libft/libft.a libs
-	cp ../minishell/libs/libft/libft.h inc
-	$(MAKE) -C ../minishell/libs/libft fclean
-	$(MAKE) -C ../libtest_utils
-	cp ../libtest_utils/libtest_utils.a libs
-	cp ../libtest_utils/libtest_utils.h inc
-	$(MAKE) -C ../libtest_utils fclean
+	# $(RM) $(TEST_UTILS_OBJS)
 
 .SILENT:

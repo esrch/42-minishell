@@ -7,7 +7,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 
-# include "../test_utils/test_utils.h"
+# include "../inc/libtest_utils.h"
 # include "../../minishell/libft/libft.h"
 # include "../../minishell/includes/token.h"
 # include "../../minishell/includes/char_tokenizer.h"

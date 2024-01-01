@@ -9,6 +9,20 @@
 # define UNDERLINE(text) "\x1b[4m"text"\x1b[24m"
 # define RED(text) "\x1b[31m"text"\x1b[0m"
 # define GREEN(text) "\x1b[32m"text"\x1b[0m"
+# define DIM(text) "\x1b[2m"text"\x1b[22m"
+
+# define ASSERT_EXPECTED(assertion, printf_fmt, msg, expected, value) \
+	if (assertion) \
+		printf(GREEN("%s: OK\n"), msg); \
+	else \
+	{ \
+		printf(RED( \
+			"\n%s: Error\n" \
+			"Expected : %" #printf_fmt "\n" \
+			"Actual   : %" #printf_fmt "\n\n"), \
+			msg, expected, value); \
+		inc_test_errors(); \
+	}
 
 typedef void	(*t_test_fn)(void);
 
@@ -34,8 +48,15 @@ void	test_suite_run(t_test_suite *test_suite);
 void	inc_test_errors(void);
 
 // Assert.
-void	assert_eq_int(char *msg, int expected, int value);
-void	assert_eq_str(char *msg, char *expected, char *value);
-void	assert_eq_true(char *msg, bool expected);
+void	assert_section(char *title);
+void	assert_msg(char *msg);
+void	assert_int_eq(char *msg, int expected, int value);
+void	assert_char_eq(char *msg, char expected, char value);
+void	assert_str_eq(char *msg, char *expected, char *value);
+void	assert_addr_eq(char *msg, void *expected, void *value);
+void	assert_true(char *msg, bool value);
+void	assert_false(char *msg, bool value);
+void	assert_null(char *msg, void *value);
+void	assert_not_null(char *msg, void *value);
 
 #endif /* TEST_UTILS_H */

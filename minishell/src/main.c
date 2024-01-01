@@ -1,22 +1,22 @@
-#include "../includes/minishell.h"
+#include "_minishell.h"
 
 int	main(void)
 {
-	char			*line;
+	char	*cmd_line;
 
 	// TODO: Setup signal handling
-	line = readline("> ");
-	while (line && *line)
+	cmd_line = readline("> ");
+	while (cmd_line && *cmd_line)
 	{
-		// TODO: Tokenize
-		// TODO: Expand parameters
+		// TODO: Tokenize command line
+		// TODO: Parameter expansion
 		// TODO: Split words
-		// TODO: Expand file names
+		// TODO: Filename expansion
 		// TODO: Split words
-		// TODO: Parse into AST
+		// TODO: Parse tokens to AST
 		// TODO: Execute AST
-		free(line);
-		line = readline("> ");
+		ft_printf("Your commande: %s\n", cmd_line);
+		free(cmd_line);
+		cmd_line = readline("> ");
 	}
-	free(line);
 }
