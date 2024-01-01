@@ -67,12 +67,14 @@ void	test_token_list_add_word(void)
 	int				result;
 
 	token_list = NULL;
+
 	result = token_list_add_word(&token_list, ft_strdup("lexeme"), ft_strdup("value"));
 	assert_not_null("Creates a token list node", token_list);
 	assert_int_eq("Creates and sets token type", token_list->token->type, T_WORD);
 	assert_str_eq("Creates and sets token lexeme", "lexeme", token_list->token->lexeme);
 	assert_str_eq("Creates and sets token value", "value", token_list->token->value);
 	assert_int_eq("Returns 0 on success", 0, result);
+
 	token_list_clear(&token_list);
 }
 
@@ -147,6 +149,8 @@ void	test_token_list_at(void)
 
 	assert_section("Index beyond list");
 	assert_null("Returns NULL", token_list_at(token_list, 3));
+
+	token_list_clear(&token_list);
 }
 
 void	test_token_list_insert(void)
