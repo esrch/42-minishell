@@ -95,12 +95,15 @@ void	test_token_list_del(void)
 void	test_token_list_clear(void)
 {
 	t_token_list	*token_list;
-	t_token			*token;
 
 	token_list = NULL;
-	token = malloc(sizeof(*token));
-	token_init_word(token, ft_strdup("lexeme"), ft_strdup("value"));
-	token_list_add_token(&token_list, token);
+	
+	assert_section("Clear NULL list");
+	token_list_clear(&token_list);
+	assert_msg("No error");
+
+	assert_section("Clear list with node");
+	token_list_add_word(&token_list, ft_strdup("lexeme"), ft_strdup("value"));
 	token_list_clear(&token_list);
 	assert_msg("Test with valgrind: No memory leak.");
 }

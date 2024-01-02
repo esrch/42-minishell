@@ -17,14 +17,19 @@ bool	lexer_at_end(t_lexer *lexer)
 	return (lexer_peek(lexer) == 0);
 }
 
-bool	lexer_match(t_lexer *lexer, char c)
+bool	lexer_match(t_lexer *lexer, char *expected)
 {
-	if (lexer_peek(lexer) == c)
-	{
-		(void)lexer_advance(lexer);
-		return (true);
-	}
-	return (false);
+	int	i;
+
+	i = 0;
+	while (expected[i]
+		&& lexer->src[lexer->current + i]
+		&& expected[i] == lexer->src[lexer->current + i])
+		i++;
+	if (expected[i] != 0)
+		return (false);
+	lexer->current += i;
+	return (true);
 }
 
 char	*lexer_extract(t_lexer *lexer)

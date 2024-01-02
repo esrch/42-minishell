@@ -17,7 +17,7 @@ bool	lexer_at_end(t_lexer *lexer);
 char	lexer_advance(t_lexer *lexer);
 int		lexer_advance_delim(t_lexer *lexer, char *delim);
 int		lexer_advance_while(t_lexer *lexer, bool (*predicate)(char));
-bool	lexer_match(t_lexer *lexer, char c);
+bool	lexer_match(t_lexer *lexer, char *expected);
 char	*lexer_extract(t_lexer *lexer);
 
 #endif
