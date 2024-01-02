@@ -11,5 +11,6 @@
 # include "lexer.h"
 # include "pattern_match.h"
 # include "token_list.h"
+# include "ms_tokenizer.h"
 
 #endif

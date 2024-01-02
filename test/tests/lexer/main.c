@@ -82,10 +82,22 @@ void	test_lexer_match(void)
 	assert_false("Match returns false if the string doesn't fully match", lexer_match(&lexer, "ac"));
 	assert_int_eq("Match doesn't change current if string doesn't match", 0, lexer.current);
 
-	assert_section("Match");
+	assert_section("Match start");
 	assert_true("Match returns true if the string matches", lexer_match(&lexer, "ab"));
 	assert_int_eq("Match doesn't change start if string matches", 0, lexer.start);
 	assert_int_eq("Match changes current if string matches", 2, lexer.current);
+
+	assert_section("Match middle");
+	lexer.start = 2;
+	lexer.current = 2;
+	assert_true("Match returns true if the string matches", lexer_match(&lexer, "cd"));
+	assert_int_eq("Match doesn't change start if string matches", 2, lexer.start);
+	assert_int_eq("Match changes current if string matches", 4, lexer.current);
+
+	assert_section("Match full expected string");
+	lexer_init(&lexer, "a");
+	assert_false("Match returns false if the string doesn't match", lexer_match(&lexer, "ab"));
+	assert_int_eq("Match doesn't change current if string doesn't match", 0, lexer.current);
 }
 
 void	test_lexer_extract(void)
