@@ -6,7 +6,7 @@ void	test_token_list_construct(void)
 	t_token			token;
 
 	token_init_op(&token, T_GREAT);
-	token_list = token_list_construct(&token);
+	token_list = token_list_construct(&token, NULL);
 	assert_addr_eq("Token set", token_list->token, &token);
 	assert_null("Next is null", token_list->next);
 	free(token_list);
@@ -17,7 +17,7 @@ void	test_token_list_add(void)
 	t_token_list	*token_list;
 	t_token			*token1;
 	t_token			*token2;
-	int				result;
+	t_error			error;
 
 	token_list = NULL;
 	token1 = malloc(sizeof(*token1));
@@ -25,55 +25,61 @@ void	test_token_list_add(void)
 	token_init_op(token1, T_GREAT);
 	token_init_op(token2, T_LESS);
 
+	error_init(&error);
 	assert_section("Empty list");
-	result = token_list_add_token(&token_list, token1);
+	token_list_add_token(&token_list, token1, &error);
 	assert_not_null("Creates node from NULL token list", token_list);
 	assert_addr_eq("Adds the token to the new node", token1, token_list->token);
-	assert_int_eq("Returns 0 on success", 0, result);
+	assert_false("Sets no error", has_error(&error));
 
+	error_init(&error);
 	assert_section("Second node");
-	result = token_list_add_token(&token_list, token2);
+	token_list_add_token(&token_list, token2, &error);
 	assert_not_null("Creates second node", token_list->next);
 	assert_addr_eq("Adds the token to the second node", token2, token_list->next->token);
-	assert_int_eq("Returns 0 on success", 0, result);
+	assert_false("Sets no error", has_error(&error));
 
+	error_init(&error);
 	assert_section("Token is NULL");
-	result = token_list_add_token(&token_list, NULL);
+	token_list_add_token(&token_list, NULL, &error);
 	assert_null("Add fails when no token", token_list->next->next);
-	assert_int_eq("Returns -1 on failure", -1, result);
+	assert_true("Sets the error", has_error(&error));
 
 	free(token1);
 	free(token2);
 	free(token_list->next);
 	free(token_list);
+	error_cleanup(&error);
 }
 
 void	test_token_list_add_op(void)
 {
 	t_token_list	*token_list;
-	int				result;
+	t_error			error;
 
 	token_list = NULL;
-	result = token_list_add_op(&token_list, T_GREAT);
+	error_init(&error);
+	token_list_add_op(&token_list, T_GREAT, &error);
 	assert_not_null("Creates a token list node", token_list);
 	assert_int_eq("Creates and sets op token", token_list->token->type, T_GREAT);
-	assert_int_eq("Returns 0 on success", 0, result);
+	assert_false("Sets no error", has_error(&error));
 	token_list_clear(&token_list);
 }
 
 void	test_token_list_add_word(void)
 {
 	t_token_list	*token_list;
-	int				result;
+	t_error			error;
 
 	token_list = NULL;
 
-	result = token_list_add_word(&token_list, ft_strdup("lexeme"), ft_strdup("value"));
+	error_init(&error);
+	token_list_add_word(&token_list, ft_strdup("lexeme"), ft_strdup("value"), &error);
 	assert_not_null("Creates a token list node", token_list);
 	assert_int_eq("Creates and sets token type", token_list->token->type, T_WORD);
 	assert_str_eq("Creates and sets token lexeme", "lexeme", token_list->token->lexeme);
 	assert_str_eq("Creates and sets token value", "value", token_list->token->value);
-	assert_int_eq("Returns 0 on success", 0, result);
+	assert_false("Sets no error", has_error(&error));
 
 	token_list_clear(&token_list);
 }
@@ -82,12 +88,9 @@ void	test_token_list_add_word(void)
 void	test_token_list_del(void)
 {
 	t_token_list	*token_list;
-	t_token			*token;
 
 	token_list = NULL;
-	token = malloc(sizeof(*token));
-	token_init_word(token, ft_strdup("lexeme"), ft_strdup("value"));
-	token_list_add_token(&token_list, token);
+	token_list_add_word(&token_list, ft_strdup("lexeme"), ft_strdup("value"), NULL);
 	token_list_del(token_list);
 	assert_msg("Test with valgrind: No memory leak.");
 }
@@ -103,7 +106,7 @@ void	test_token_list_clear(void)
 	assert_msg("No error");
 
 	assert_section("Clear list with node");
-	token_list_add_word(&token_list, ft_strdup("lexeme"), ft_strdup("value"));
+	token_list_add_word(&token_list, ft_strdup("lexeme"), ft_strdup("value"), NULL);
 	token_list_clear(&token_list);
 	assert_msg("Test with valgrind: No memory leak.");
 }
@@ -112,6 +115,7 @@ void	test_token_list_last(void)
 {
 	t_token_list	*token_list;
 	t_token_list	*last_node;
+	t_error			error;
 
 	token_list = NULL;
 	
@@ -120,9 +124,9 @@ void	test_token_list_last(void)
 	assert_null("Last node of empty list is NULL", last_node);
 
 	assert_section("Full list");
-	token_list_add_op(&token_list, T_GREAT);
-	token_list_add_op(&token_list, T_LESS);
-	token_list_add_op(&token_list, T_EOF);
+	token_list_add_op(&token_list, T_GREAT, &error);
+	token_list_add_op(&token_list, T_LESS, &error);
+	token_list_add_op(&token_list, T_EOF, &error);
 	last_node = token_list_last(token_list);
 	assert_int_eq("Returns last token", T_EOF, last_node->token->type);
 
@@ -135,9 +139,9 @@ void	test_token_list_at(void)
 
 	token_list = NULL;
 
-	token_list_add_op(&token_list, T_AND_AND);
-	token_list_add_op(&token_list, T_GREAT);
-	token_list_add_op(&token_list, T_LESS);
+	token_list_add_op(&token_list, T_AND_AND, NULL);
+	token_list_add_op(&token_list, T_GREAT, NULL);
+	token_list_add_op(&token_list, T_LESS, NULL);
 
 	assert_section("Index of NULL list");
 	assert_null("Returns NULL", token_list_at(NULL, 0));
@@ -168,11 +172,11 @@ void	test_token_list_insert(void)
 	insertion1 = NULL;
 	insertion2 = NULL;
 	insertion3 = NULL;
-	token_list_add_op(&insertion1, T_AND_AND);
-	token_list_add_op(&insertion1, T_GREAT);
-	token_list_add_op(&insertion2, T_GREAT_GREAT);
-	token_list_add_op(&insertion2, T_LESS);
-	token_list_add_op(&insertion3, T_PIPE);
+	token_list_add_op(&insertion1, T_AND_AND, NULL);
+	token_list_add_op(&insertion1, T_GREAT, NULL);
+	token_list_add_op(&insertion2, T_GREAT_GREAT, NULL);
+	token_list_add_op(&insertion2, T_LESS, NULL);
+	token_list_add_op(&insertion3, T_PIPE, NULL);
 
 	assert_section("Insert in empty list");
 	token_list_insert(&original, insertion1);
@@ -205,12 +209,12 @@ void	test_token_list_remove_after(void)
 	t_token_list	*token_list;
 
 	token_list = NULL;
-	token_list_add_op(&token_list, T_AND_AND);
-	token_list_add_op(&token_list, T_GREAT);
-	token_list_add_op(&token_list, T_GREAT_GREAT);
-	token_list_add_op(&token_list, T_LESS);
-	token_list_add_op(&token_list, T_LESS_LESS);
-	token_list_add_op(&token_list, T_PIPE);
+	token_list_add_op(&token_list, T_AND_AND, NULL);
+	token_list_add_op(&token_list, T_GREAT, NULL);
+	token_list_add_op(&token_list, T_GREAT_GREAT, NULL);
+	token_list_add_op(&token_list, T_LESS, NULL);
+	token_list_add_op(&token_list, T_LESS_LESS, NULL);
+	token_list_add_op(&token_list, T_PIPE, NULL);
 
 	assert_section("Remove from NULL");
 	token_list_remove_after(NULL, 1);
@@ -243,12 +247,12 @@ void	test_token_list_replace_after(void)
 
 	original = NULL;
 	insertion = NULL;
-	token_list_add_op(&original, T_AND_AND);
-	token_list_add_op(&original, T_GREAT);
-	token_list_add_op(&original, T_GREAT_GREAT);
-	token_list_add_op(&original, T_LESS);
-	token_list_add_op(&insertion, T_LESS_LESS);
-	token_list_add_op(&insertion, T_PIPE);
+	token_list_add_op(&original, T_AND_AND, NULL);
+	token_list_add_op(&original, T_GREAT, NULL);
+	token_list_add_op(&original, T_GREAT_GREAT, NULL);
+	token_list_add_op(&original, T_LESS, NULL);
+	token_list_add_op(&insertion, T_LESS_LESS, NULL);
+	token_list_add_op(&insertion, T_PIPE, NULL);
 
 	assert_section("Replace in NULL");
 	token_list_replace_after(NULL, 1, insertion);

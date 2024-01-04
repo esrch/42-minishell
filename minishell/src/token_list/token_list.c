@@ -1,12 +1,15 @@
 #include "_minishell.h"
 
-t_token_list	*token_list_construct(t_token *token)
+t_token_list	*token_list_construct(t_token *token, t_error *error)
 {
 	t_token_list	*token_list;
 
 	token_list = malloc(sizeof(*token_list));
 	if (!token_list)
+	{
+		error_set(error, ERR_SYSTEM, NULL);
 		return (NULL);
+	}
 	token_list->next = NULL;
 	token_list->token = token;
 	return (token_list);

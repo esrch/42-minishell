@@ -3,10 +3,13 @@ NAME = minishell
 SRC_FOLDER = src/
 SRC_FILES = \
 	main.c \
+	error.c \
 	token.c \
 	pattern_match.c \
-	$(addprefix lexer, lexer.c lexer_advance.c) \
-	$(addprefix token_list, token_list.c token_list_2.c token_list_add.c)
+	$(addprefix lexer/, lexer.c lexer_advance.c) \
+	$(addprefix token_list/, token_list.c token_list_2.c token_list_add.c) \
+	$(addprefix ms_tokenizer/, ms_tokenizer.c ms_tokenize_word.c ms_tokenizer_utils.c)
+
 SRCS = $(addprefix $(SRC_FOLDER), $(SRC_FILES))
 OBJS = $(SRCS:.c=.o)
 

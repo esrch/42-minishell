@@ -1,6 +1,6 @@
 #include "_minishell.h"
 
-static int	scan_token(t_lexer *lexer, t_token_list **token_list);
+static void	scan_token(t_lexer *lexer, t_token_list **token_list, t_error *error);
 
 static t_token_list	*cleanup_error(t_token_list **token_list)
 {
@@ -8,7 +8,8 @@ static t_token_list	*cleanup_error(t_token_list **token_list)
 	return (NULL);
 }
 
-t_token_list	*ms_tokenize(char *src){
+t_token_list	*ms_tokenize(char *src, t_error *error)
+{
 	t_lexer			lexer;
 	t_token_list	*token_list;
 
@@ -17,46 +18,57 @@ t_token_list	*ms_tokenize(char *src){
 	while (!lexer_at_end(&lexer))
 	{
 		lexer.start = lexer.current;
-		if (scan_token(&lexer, &token_list) < 0)
+		scan_token(&lexer, &token_list, error);
+		if (has_error(error))
 			return (cleanup_error(&token_list));
 	}
-	if (token_list_add_op(&token_list, T_EOF) < 0)
+	token_list_add_op(&token_list, T_EOF, error);
+	if (has_error(error))
 		return (cleanup_error(&token_list));
 	return (token_list);
 }
 
-static int	tokenize_op(t_lexer *lexer, t_token_list **token_list)
+static void	tokenize_op(t_lexer *lexer, t_token_list **token_list, t_error *error)
 {
+	char	*err_msg;
+
 	if (lexer_match(lexer, "&&"))
-		return (token_list_add_op(token_list, T_AND_AND));
-	if (lexer_match(lexer, "||"))
-		return (token_list_add_op(token_list, T_PIPE_PIPE));
-	if (lexer_match(lexer, "|"))
-		return (token_list_add_op(token_list, T_PIPE));
-	if (lexer_match(lexer, ">>"))
-		return (token_list_add_op(token_list, T_GREAT_GREAT));
-	if (lexer_match(lexer, ">"))
-		return (token_list_add_op(token_list, T_GREAT));
-	if (lexer_match(lexer, "<<"))
-		return (token_list_add_op(token_list, T_LESS_LESS));
-	if (lexer_match(lexer, "<"))
-		return (token_list_add_op(token_list, T_LESS));
-	if (lexer_match(lexer, "("))
-		return (token_list_add_op(token_list, T_PAREN_OPEN));
-	if (lexer_match(lexer, ")"))
-		return (token_list_add_op(token_list, T_PAREN_CLOSE));
-	ft_printf_error("Invalid character near %c\n", lexer_peek(lexer));
-	return (-1);
+		token_list_add_op(token_list, T_AND_AND, error);
+	else if (lexer_match(lexer, "||"))
+		token_list_add_op(token_list, T_PIPE_PIPE, error);
+	else if (lexer_match(lexer, "|"))
+		token_list_add_op(token_list, T_PIPE, error);
+	else if (lexer_match(lexer, ">>"))
+		token_list_add_op(token_list, T_GREAT_GREAT, error);
+	else if (lexer_match(lexer, ">"))
+		token_list_add_op(token_list, T_GREAT, error);
+	else if (lexer_match(lexer, "<<"))
+		token_list_add_op(token_list, T_LESS_LESS, error);
+	else if (lexer_match(lexer, "<"))
+		token_list_add_op(token_list, T_LESS, error);
+	else if (lexer_match(lexer, "("))
+		token_list_add_op(token_list, T_PAREN_OPEN, error);
+	else if (lexer_match(lexer, ")"))
+		token_list_add_op(token_list, T_PAREN_CLOSE, error);
+	else
+	{
+		err_msg = ft_strdup("syntax error near unexpected character 'c'");
+		if (!err_msg)
+		{
+			error_set(error, ERR_SYSTEM, NULL);
+			return ;
+		}
+		err_msg[40] = lexer_peek(lexer);
+		error_set(error, ERR_CUSTOM, err_msg);
+	}
 }
 
-static int	scan_token(t_lexer *lexer, t_token_list **token_list)
+static void	scan_token(t_lexer *lexer, t_token_list **token_list, t_error *error)
 {
 	if (ms_is_whitespace(lexer_peek(lexer)))
-	{
 		(void)lexer_advance(lexer);
-		return (0);
-	}
-	if (ms_is_metacharacter(lexer_peek(lexer)))
-		return (tokenize_op(lexer, token_list));
-	return tokenize_word(lexer, token_list);
+	else if (ms_is_metacharacter(lexer_peek(lexer)))
+		tokenize_op(lexer, token_list, error);
+	else
+		tokenize_word(lexer, token_list, error);
 }

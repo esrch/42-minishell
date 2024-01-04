@@ -7,6 +7,7 @@
 # include <stdlib.h>
 
 # include "libft.h"
+# include "error.h"
 # include "token.h"
 # include "lexer.h"
 # include "pattern_match.h"
