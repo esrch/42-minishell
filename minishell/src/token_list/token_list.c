@@ -10,6 +10,7 @@ t_token_list	*token_list_construct(t_token *token, t_error *error)
 		error_set(error, ERR_SYSTEM, NULL);
 		return (NULL);
 	}
+	token_list->prev = NULL;
 	token_list->next = NULL;
 	token_list->token = token;
 	return (token_list);

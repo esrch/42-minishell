@@ -21,6 +21,7 @@ void	token_list_add_token(t_token_list **token_list, t_token *token, t_error *er
 	}
 	last = token_list_last(*token_list);
 	last->next = new_node;
+	new_node->prev = last;
 }
 
 void	token_list_add_op(t_token_list **token_list, t_token_type token_type, t_error *error)
