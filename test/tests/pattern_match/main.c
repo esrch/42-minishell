@@ -10,7 +10,16 @@ void	test_pattern_match(void)
 	ASSERT_MATCH("Hello", "Hello");
 	ASSERT_MATCH("Hel*", "Hello");
 	ASSERT_MATCH("H*l*o", "He    llo");
+	ASSERT_MATCH("Hel*", "Hel");
+	ASSERT_MATCH("A\"A\"", "AA");
+	ASSERT_MATCH("A\"'A\"", "A'A");
+	ASSERT_MATCH("A\"*\"A", "A*A");
+	ASSERT_MATCH("A'A'", "AA");
+	ASSERT_MATCH("A'\"'A", "A\"A");
+	ASSERT_MATCH("A'*'A", "A*A");
+
 	ASSERT_NO_MATCH("Hel*p", "Hell");
+	ASSERT_NO_MATCH("A'*'A", "ABA");
 }
 
 int	main(void)

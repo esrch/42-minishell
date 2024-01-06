@@ -1,18 +1,20 @@
 #include "_minishell.h"
 
-int	main(void)
+int	main(int argc, char **argv)
 {
 	char			*cmd_line;
 	t_token_list	*token_list;
+	t_error			error;
 	t_token_list	*current;
 
+	(void) argc;
 	// TODO: Setup signal handling
 	cmd_line = readline("> ");
 	while (cmd_line && *cmd_line)
 	{
-		token_list = ms_tokenize(cmd_line);
-		if (!token_list)
-			ft_printf_error("Error");
+		token_list = ms_tokenize(cmd_line, &error);
+		if (has_error(&error))
+			error_print(&error, argv[0]);
 		else
 		{
 			current = token_list;

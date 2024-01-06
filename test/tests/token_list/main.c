@@ -115,7 +115,6 @@ void	test_token_list_last(void)
 {
 	t_token_list	*token_list;
 	t_token_list	*last_node;
-	t_error			error;
 
 	token_list = NULL;
 	
@@ -124,9 +123,9 @@ void	test_token_list_last(void)
 	assert_null("Last node of empty list is NULL", last_node);
 
 	assert_section("Full list");
-	token_list_add_op(&token_list, T_GREAT, &error);
-	token_list_add_op(&token_list, T_LESS, &error);
-	token_list_add_op(&token_list, T_EOF, &error);
+	token_list_add_op(&token_list, T_GREAT, NULL);
+	token_list_add_op(&token_list, T_LESS, NULL);
+	token_list_add_op(&token_list, T_EOF, NULL);
 	last_node = token_list_last(token_list);
 	assert_int_eq("Returns last token", T_EOF, last_node->token->type);
 
