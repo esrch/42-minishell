@@ -9,8 +9,10 @@ void	test_eof_token(void)
 	token_list = ms_tokenize("", &error);
 	assert_not_null("Creates a token list", token_list);
 	assert_int_eq("Adds EOF token", T_EOF, token_list->token->type);
+	assert_true("No error", !has_error(&error));
 
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_ignore_whitespace(void)
@@ -23,16 +25,20 @@ void	test_ignore_whitespace(void)
 	token_list = ms_tokenize("     \t  ", &error);
 	assert_not_null("Creates a token list", token_list);
 	assert_int_eq("Adds EOF token", T_EOF, token_list->token->type);
+	assert_true("No error", !has_error(&error));
 
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Whitespace with");
 	token_list = ms_tokenize("  &&   \t \n ", &error);
 	assert_not_null("Creates a token list", token_list);
 	assert_int_eq("Adds T_AND_AND token", T_AND_AND, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 1)->token->type);
+	assert_true("No error", !has_error(&error));
 
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_and_and_token(void)
@@ -44,8 +50,10 @@ void	test_and_and_token(void)
 	token_list = ms_tokenize("&&", &error);
 	assert_int_eq("Adds T_AND_AND token", T_AND_AND, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 1)->token->type);
+	assert_true("No error", !has_error(&error));
 	
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_pipe_token(void)
@@ -57,8 +65,10 @@ void	test_pipe_token(void)
 	token_list = ms_tokenize("|", &error);
 	assert_int_eq("Adds T_PIPE token", T_PIPE, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 1)->token->type);
+	assert_true("No error", !has_error(&error));
 	
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_pipe_pipe_token(void)
@@ -72,16 +82,20 @@ void	test_pipe_pipe_token(void)
 	assert_int_eq("Adds T_PIPE_PIPE token",
 		T_PIPE_PIPE, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 1)->token->type);
+	assert_true("No error", !has_error(&error));
 
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Handles ||| correctly");
 	token_list = ms_tokenize("|||", &error);
 	assert_int_eq("Adds T_PIPE_PIPE token", T_PIPE_PIPE, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds T_PIPE token", T_PIPE, token_list_at(token_list, 1)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 2)->token->type);
+	assert_true("No error", !has_error(&error));
 	
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_great_token(void)
@@ -93,8 +107,10 @@ void	test_great_token(void)
 	token_list = ms_tokenize(">", &error);
 	assert_int_eq("Adds T_GREAT token", T_GREAT, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 1)->token->type);
+	assert_true("No error", !has_error(&error));
 	
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_great_great_token(void)
@@ -108,16 +124,20 @@ void	test_great_great_token(void)
 	assert_int_eq("Adds T_GREAT_GREAT token",
 		T_GREAT_GREAT, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 1)->token->type);
+	assert_true("No error", !has_error(&error));
 
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Handles >>> correctly");
 	token_list = ms_tokenize(">>>", &error);
 	assert_int_eq("Adds T_GREAT_GREAT token", T_GREAT_GREAT, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds T_GREAT token", T_GREAT, token_list_at(token_list, 1)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 2)->token->type);
+	assert_true("No error", !has_error(&error));
 	
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_less_token(void)
@@ -129,8 +149,10 @@ void	test_less_token(void)
 	token_list = ms_tokenize("<", &error);
 	assert_int_eq("Adds T_LESS token", T_LESS, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 1)->token->type);
+	assert_true("No error", !has_error(&error));
 	
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_paren_open_token(void)
@@ -142,8 +164,10 @@ void	test_paren_open_token(void)
 	token_list = ms_tokenize("(", &error);
 	assert_int_eq("Adds T_PAREN_OPEN token", T_PAREN_OPEN, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 1)->token->type);
+	assert_true("No error", !has_error(&error));
 	
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_paren_close_token(void)
@@ -155,8 +179,10 @@ void	test_paren_close_token(void)
 	token_list = ms_tokenize(")", &error);
 	assert_int_eq("Adds T_PAREN_CLOSE token", T_PAREN_CLOSE, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 1)->token->type);
+	assert_true("No error", !has_error(&error));
 	
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_less_less_token(void)
@@ -170,16 +196,20 @@ void	test_less_less_token(void)
 	assert_int_eq("Adds T_LESS_LESS token",
 		T_LESS_LESS, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 1)->token->type);
+	assert_true("No error", !has_error(&error));
 
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Handles <<< correctly");
 	token_list = ms_tokenize("<<<", &error);
 	assert_int_eq("Adds T_LESS_LESS token", T_LESS_LESS, token_list_at(token_list, 0)->token->type);
 	assert_int_eq("Adds T_LESS token", T_LESS, token_list_at(token_list, 1)->token->type);
 	assert_int_eq("Adds EOF token", T_EOF, token_list_at(token_list, 2)->token->type);
+	assert_true("No error", !has_error(&error));
 	
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_invalid_metacharacter(void)
@@ -195,14 +225,12 @@ void	test_invalid_metacharacter(void)
 	assert_true("Sets an error", has_error(&error));
 	error_cleanup(&error);
 
-	error_init(&error);
 	assert_section("Invalid metacharacter: &");
 	token_list = ms_tokenize("&", &error);
 	assert_null("Returns a NULL token_list", token_list);
 	assert_true("Sets an error", has_error(&error));
 	error_cleanup(&error);
 
-	error_init(&error);
 	assert_section("Invalid metacharacter: &&&");
 	token_list = ms_tokenize("&&&", &error);
 	assert_null("Returns a NULL token_list", token_list);
@@ -222,7 +250,9 @@ void	test_simple_words(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "abc", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Multiple words");
 	token_list = ms_tokenize("abc   cde", &error);
@@ -233,7 +263,9 @@ void	test_simple_words(void)
 	assert_int_eq("Sets second T_WORD token type", T_WORD, token_list_at(token_list, 1)->token->type);
 	assert_str_eq("Sets second lexeme", "cde", token_list_at(token_list, 1)->token->lexeme);
 	assert_null("Sets second value to NULL", token_list_at(token_list, 1)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_simple_double_quotes(void)
@@ -248,7 +280,9 @@ void	test_simple_double_quotes(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "\"abc\"", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Spaces in the double quotes");
 	token_list = ms_tokenize("\"abc  cde\"", &error);
@@ -256,7 +290,9 @@ void	test_simple_double_quotes(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "\"abc  cde\"", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Unclosed double quotes");
 	token_list = ms_tokenize("\"abc", &error);
@@ -264,7 +300,6 @@ void	test_simple_double_quotes(void)
 	assert_true("Sets error", has_error(&error));
 	error_cleanup(&error);
 
-	error_init(&error);
 	assert_section("Multiple double quoted words");
 	token_list = ms_tokenize("\"abc\" \"cde\"", &error);
 	assert_not_null("Creates token list", token_list);
@@ -274,7 +309,9 @@ void	test_simple_double_quotes(void)
 	assert_int_eq("Sets second T_WORD token type", T_WORD, token_list_at(token_list, 1)->token->type);
 	assert_str_eq("Sets second lexeme", "\"cde\"", token_list_at(token_list, 1)->token->lexeme);
 	assert_null("Sets second value to NULL", token_list_at(token_list, 1)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_double_quotes_in_word(void)
@@ -289,7 +326,9 @@ void	test_double_quotes_in_word(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "\"abc\"def", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Double quote at end");
 	token_list = ms_tokenize("abc\"def\"", &error);
@@ -297,7 +336,9 @@ void	test_double_quotes_in_word(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "abc\"def\"", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Double quote in middle");
 	token_list = ms_tokenize("abc\"def\"ghi", &error);
@@ -305,7 +346,9 @@ void	test_double_quotes_in_word(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "abc\"def\"ghi", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Double quotes in a row");
 	token_list = ms_tokenize("abc\"def\"\"ghi\"jkl", &error);
@@ -313,7 +356,9 @@ void	test_double_quotes_in_word(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "abc\"def\"\"ghi\"jkl", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_simple_single_quotes(void)
@@ -328,7 +373,9 @@ void	test_simple_single_quotes(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "'abc'", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Spaces in the single quotes");
 	token_list = ms_tokenize("'abc  cde'", &error);
@@ -336,7 +383,9 @@ void	test_simple_single_quotes(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "'abc  cde'", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Unclosed single quotes");
 	token_list = ms_tokenize("'abc", &error);
@@ -344,7 +393,6 @@ void	test_simple_single_quotes(void)
 	assert_true("Sets error", has_error(&error));
 	error_cleanup(&error);
 
-	error_init(&error);
 	assert_section("Multiple single quoted words");
 	token_list = ms_tokenize("'abc' 'cde'", &error);
 	assert_not_null("Creates token list", token_list);
@@ -354,7 +402,9 @@ void	test_simple_single_quotes(void)
 	assert_int_eq("Sets second T_WORD token type", T_WORD, token_list_at(token_list, 1)->token->type);
 	assert_str_eq("Sets second lexeme", "'cde'", token_list_at(token_list, 1)->token->lexeme);
 	assert_null("Sets second value to NULL", token_list_at(token_list, 1)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_single_quotes_in_word(void)
@@ -369,7 +419,9 @@ void	test_single_quotes_in_word(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "'abc'def", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Single quote at end");
 	token_list = ms_tokenize("abc'def'", &error);
@@ -377,7 +429,9 @@ void	test_single_quotes_in_word(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "abc'def'", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Single quote in middle");
 	token_list = ms_tokenize("abc'def'ghi", &error);
@@ -385,7 +439,9 @@ void	test_single_quotes_in_word(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "abc'def'ghi", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Single quotes in a row");
 	token_list = ms_tokenize("abc'def''ghi'jkl", &error);
@@ -393,7 +449,9 @@ void	test_single_quotes_in_word(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "abc'def''ghi'jkl", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_mixing_quotes(void)
@@ -408,7 +466,9 @@ void	test_mixing_quotes(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "\"a'bc\"", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("Double quote inside single quotes");
 	token_list = ms_tokenize("'a\"bc'", &error);
@@ -416,7 +476,9 @@ void	test_mixing_quotes(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "'a\"bc'", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 
 	assert_section("All mixed");
 	token_list = ms_tokenize("ab'c\"d'\"e'f\"g", &error);
@@ -424,7 +486,9 @@ void	test_mixing_quotes(void)
 	assert_int_eq("Sets T_WORD token type", T_WORD, token_list_at(token_list, 0)->token->type);
 	assert_str_eq("Sets lexeme", "ab'c\"d'\"e'f\"g", token_list_at(token_list, 0)->token->lexeme);
 	assert_null("Sets value to NULL", token_list_at(token_list, 0)->token->value);
+	assert_true("No error", !has_error(&error));
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 void	test_full_command(void)
@@ -456,8 +520,10 @@ void	test_full_command(void)
 	assert_int_eq("Sets seventh token type", T_WORD, token_list_at(token_list, 6)->token->type);
 	assert_str_eq("Sets seventh lexeme", "\"output.txt\"", token_list_at(token_list, 6)->token->lexeme);
 	assert_null("Sets seventh value to NULL", token_list_at(token_list, 6)->token->value);
+	assert_true("No error", !has_error(&error));
 
 	token_list_clear(&token_list);
+	error_cleanup(&error);
 }
 
 int	main(void)

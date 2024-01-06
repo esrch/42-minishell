@@ -1,20 +1,32 @@
 #include "_minishell.h"
 
+/** Initialize error type and message
+ * 
+ * Required before using has_error
+*/
 void	error_init(t_error *error)
 {
 	error->type = ERR_NONE;
 	error->msg = NULL;
 }
 
+/** Sets error fields
+ * 
+ * msg should either be NULL or a string that can be freed
+*/
 void	error_set(t_error *error, t_error_type type, char *msg)
 {
 	error->type = type;
 	error->msg = msg;
 }
 
+/** Frees the error message and resets all fieds to defaults
+ * 
+*/
 void	error_cleanup(t_error *error)
 {
 	free(error->msg);
+	error_init(error);
 }
 
 void	error_print(t_error *error, char *prompt)
@@ -37,5 +49,5 @@ void	error_print(t_error *error, char *prompt)
 
 bool	has_error(t_error *error)
 {
-	return (error && error->type != ERR_NONE);
+	return (!error || error->type != ERR_NONE);
 }

@@ -32,6 +32,8 @@ void	test_error_cleanup(void)
 	error_msg = ft_strdup("Error message");
 	error_set(&error, ERR_SYSTEM, error_msg);
 	error_cleanup(&error);
+	assert_int_eq("Resets error type to no error", ERR_NONE, error.type);
+	assert_null("Resets error message to NULL", error.msg);
 	assert_msg("Test with valgrind: No leak");
 }
 
@@ -95,7 +97,7 @@ void	test_has_error(void)
 	assert_true("Gives an error", has_error(&error));
 
 	assert_section("NULL error");
-	assert_false("Gives no error", has_error(NULL));
+	assert_true("Gives an error", has_error(NULL));
 }
 
 int	main(void)
