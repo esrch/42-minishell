@@ -175,7 +175,7 @@ void	test_token_list_at(void)
 	error_cleanup(&error);
 }
 
-void	test_token_list_insert(void)
+void	test_token_list_insert_after(void)
 {
 	t_token_list	*original;
 	t_token_list	*insertion1;
@@ -196,19 +196,19 @@ void	test_token_list_insert(void)
 	token_list_add_op(&insertion3, T_PIPE, &error);
 
 	assert_section("Insert in empty list");
-	token_list_insert(&original, insertion1);
+	token_list_insert_after(&original, insertion1);
 	assert_not_null("Creates nodes", original);
 	assert_int_eq("Adds first node", T_AND_AND, original->token->type);
 	assert_int_eq("Adds second node", T_GREAT, original->next->token->type);
 
 	assert_section("Insert empty list");
-	token_list_insert(&original, NULL);
+	token_list_insert_after(&original, NULL);
 	assert_int_eq("Keeps first node", T_AND_AND, original->token->type);
 	assert_int_eq("Keeps second node", T_GREAT, original->next->token->type);
 	assert_null("Adds no node", original->next->next);
 
 	assert_section("Insert in middle of list");
-	token_list_insert(&original, insertion2);
+	token_list_insert_after(&original, insertion2);
 	assert_int_eq("Keeps first node", T_AND_AND, original->token->type);
 	assert_int_eq("Links first node to second (through next)", T_GREAT_GREAT, original->next->token->type);
 	assert_int_eq("Links second node to first (through prev)", T_AND_AND, insertion2->prev->token->type);
@@ -219,7 +219,7 @@ void	test_token_list_insert(void)
 
 	assert_section("Insert at the end of the list");
 	last_node = token_list_last(original);
-	token_list_insert(&last_node, insertion3);
+	token_list_insert_after(&last_node, insertion3);
 	assert_int_eq("Adds node after last node", T_PIPE, token_list_last(original)->token->type);
 	assert_int_eq("Links insertion to last node", T_GREAT, token_list_last(original)->prev->token->type);
 
@@ -282,74 +282,61 @@ void	test_token_list_remove(void)
 	error_cleanup(&error);
 }
 
-void	test_token_list_remove_after(void)
-{
-	t_token_list	*token_list;
-	t_error			error;
-
-	token_list = NULL;
-	error_init(&error);
-	token_list_add_op(&token_list, T_AND_AND, &error);
-	token_list_add_op(&token_list, T_GREAT, &error);
-	token_list_add_op(&token_list, T_GREAT_GREAT, &error);
-	token_list_add_op(&token_list, T_LESS, &error);
-	token_list_add_op(&token_list, T_LESS_LESS, &error);
-	token_list_add_op(&token_list, T_PIPE, &error);
-
-	assert_section("Remove from NULL");
-	token_list_remove_after(NULL, 1);
-	assert_msg("No error");
-
-	assert_section("Remove negative number");
-	token_list_remove_after(token_list, -1);
-	assert_int_eq("No effect", T_GREAT, token_list->next->token->type);
-
-	assert_section("Remove zero");
-	token_list_remove_after(token_list, 0);
-	assert_int_eq("No effect", T_GREAT, token_list->next->token->type);
-
-	assert_section("Remove two");
-	token_list_remove_after(token_list, 2);
-	assert_int_eq("Removes two nodes", T_LESS, token_list->next->token->type);
-
-	assert_section("Remove more than list length");
-	token_list_remove_after(token_list, 20);
-	assert_int_eq("Keeps the first node", T_AND_AND, token_list->token->type);
-	assert_null("Removes the remaining nodes", token_list->next);
-
-	token_list_clear(&token_list);
-	error_cleanup(&error);
-}
-
-void	test_token_list_replace_after(void)
+void	test_token_list_replace(void)
 {
 	t_token_list	*original;
 	t_token_list	*insertion;
+	t_token_list	*insertion2;
 	t_error			error;
+	t_token_list	*last_node;
 
 	original = NULL;
 	insertion = NULL;
+	insertion2 = NULL;
 	error_init(&error);
 	token_list_add_op(&original, T_AND_AND, &error);
 	token_list_add_op(&original, T_GREAT, &error);
 	token_list_add_op(&original, T_GREAT_GREAT, &error);
 	token_list_add_op(&original, T_LESS, &error);
-	token_list_add_op(&insertion, T_LESS_LESS, &error);
+	token_list_add_op(&original, T_LESS_LESS, &error);
 	token_list_add_op(&insertion, T_PIPE, &error);
+	token_list_add_op(&insertion, T_PIPE_PIPE, &error);
+	token_list_add_op(&insertion2, T_PAREN_OPEN, &error);
+	token_list_add_op(&insertion2, T_PAREN_CLOSE, &error);
 
 	assert_section("Replace in NULL");
-	token_list_replace_after(NULL, 1, insertion);
+	token_list_replace(NULL, 1, insertion);
 	assert_msg("No error");
 
-	assert_section("Replace with NULL");
-	token_list_replace_after(original, 1, NULL);
-	assert_int_eq("Removes but doesn't insert", T_GREAT_GREAT, original->next->token->type);
+	assert_section("Replace with NULL at the beginning");
+	token_list_replace(&original, 1, NULL);
+	assert_int_eq("Removes first element", T_GREAT, original->token->type);
+	assert_null("Prev of first element is empty", original->prev);
 
-	assert_section("Replace with token_list");
-	token_list_replace_after(original, 1, insertion);
-	assert_int_eq("Removes and inserts", T_LESS_LESS, original->next->token->type);
-	assert_int_eq("Connects insertion with rest of list",
-		T_LESS, token_list_last(original)->token->type);
+	assert_section("Replace with token_list in the middle");
+	token_list_replace(&(original->next), 2, insertion);
+	assert_int_eq("First element correct", T_GREAT, token_list_at(original, 0)->token->type);
+	assert_int_eq("Second element correct", T_PIPE, token_list_at(original, 1)->token->type);
+	assert_addr_eq("Second element linked to first (with prev)", original, original->next->prev);
+	assert_int_eq("Third element correct", T_PIPE_PIPE, token_list_at(original, 2)->token->type);
+	assert_int_eq("Fourth element correct", T_LESS_LESS, token_list_at(original, 3)->token->type);
+	assert_int_eq("Fourth element linked to third (with prev)",
+		T_PIPE_PIPE, token_list_at(original, 3)->prev->token->type);
+
+	assert_section("Replace 10 with NULL at the end");
+	last_node = token_list_last(original);
+	token_list_replace(&last_node, 10, NULL);
+	assert_null("Last element removed", token_list_at(original, 2)->next);
+
+	assert_section("Replace whole list with an insertion");
+	token_list_replace(&original, 20, insertion2);
+	assert_int_eq("First element correct", T_PAREN_OPEN, original->token->type);
+	assert_int_eq("Second element correct", T_PAREN_CLOSE, original->next->token->type);
+	assert_null("No third element", original->next->next);
+
+	assert_section("Replace whole list with NULL");
+	token_list_replace(&original, 20, NULL);
+	assert_null("Empty list", original);
 
 	token_list_clear(&original);
 	error_cleanup(&error);
@@ -369,10 +356,9 @@ int	main(void)
 	test_suite_add_test(&test_suite, "Token list clear", test_token_list_clear);
 	test_suite_add_test(&test_suite, "Token list last", test_token_list_last);
 	test_suite_add_test(&test_suite, "Token list at", test_token_list_at);
-	test_suite_add_test(&test_suite, "Token list insert", test_token_list_insert);
+	test_suite_add_test(&test_suite, "Token list insert after", test_token_list_insert_after);
 	test_suite_add_test(&test_suite, "Token list remove", test_token_list_remove);
-	test_suite_add_test(&test_suite, "Token list remove after", test_token_list_remove_after);
-	test_suite_add_test(&test_suite, "Token list replace after", test_token_list_replace_after);
+	test_suite_add_test(&test_suite, "Token list replace", test_token_list_replace);
 
 	test_suite_run(&test_suite);
 }
