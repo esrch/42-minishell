@@ -21,6 +21,6 @@ void			token_list_replace(t_token_list **token_list, int count, t_token_list *in
 // Token add.
 void			token_list_add_token(t_token_list **token_list, t_token *token, t_error *error);
 void			token_list_add_op(t_token_list **token_list, t_token_type token_type, t_error *error);
-void			token_list_add_word(t_token_list **token_list, char *lexeme, char *value, t_error *error);
+void			token_list_add_word(t_token_list **token_list, char *value, t_error *error);
 
 #endif

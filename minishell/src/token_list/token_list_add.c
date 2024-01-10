@@ -43,7 +43,7 @@ void	token_list_add_op(t_token_list **token_list, t_token_type token_type, t_err
 	}
 }
 
-void	token_list_add_word(t_token_list **token_list, char *lexeme, char *value, t_error *error)
+void	token_list_add_word(t_token_list **token_list, char *value, t_error *error)
 {
 	t_token	*token;
 
@@ -53,7 +53,7 @@ void	token_list_add_word(t_token_list **token_list, char *lexeme, char *value, t
 		error_set(error, ERR_SYSTEM, NULL);
 		return ;
 	}
-	token_init_word(token, lexeme, value);
+	token_init_word(token, value);
 	token_list_add_token(token_list, token, error);
 	if (has_error(error))
 	{

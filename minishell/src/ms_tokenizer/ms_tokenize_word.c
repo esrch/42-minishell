@@ -2,17 +2,17 @@
 
 static void	extract_word(t_lexer *lexer, t_token_list **token_list, t_error *error)
 {
-	char	*lexeme;
+	char	*value;
 
-	lexeme = lexer_extract(lexer);
-	if (!lexeme)
+	value = lexer_extract(lexer);
+	if (!value)
 	{
 		error_set(error, ERR_SYSTEM, NULL);
 		return ;
 	}
-	token_list_add_word(token_list, lexeme, NULL, error);
+	token_list_add_word(token_list, value, error);
 	if (has_error(error))
-		free(lexeme);
+		free(value);
 }
 
 static void	handle_double_quote(t_lexer *lexer, t_error *error)

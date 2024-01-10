@@ -79,10 +79,9 @@ void	test_token_list_add_word(void)
 	token_list = NULL;
 
 	error_init(&error);
-	token_list_add_word(&token_list, ft_strdup("lexeme"), ft_strdup("value"), &error);
+	token_list_add_word(&token_list, ft_strdup("value"), &error);
 	assert_not_null("Creates a token list node", token_list);
 	assert_int_eq("Creates and sets token type", token_list->token->type, T_WORD);
-	assert_str_eq("Creates and sets token lexeme", "lexeme", token_list->token->lexeme);
 	assert_str_eq("Creates and sets token value", "value", token_list->token->value);
 	assert_true("Sets no error", !has_error(&error));
 
@@ -97,7 +96,7 @@ void	test_token_list_del(void)
 
 	error_init(&error);
 	token_list = NULL;
-	token_list_add_word(&token_list, ft_strdup("lexeme"), ft_strdup("value"), &error);
+	token_list_add_word(&token_list, ft_strdup("value"), &error);
 	token_list_del(token_list);
 	assert_msg("Test with valgrind: No memory leak.");
 	error_cleanup(&error);
@@ -116,7 +115,7 @@ void	test_token_list_clear(void)
 
 	error_init(&error);
 	assert_section("Clear list with node");
-	token_list_add_word(&token_list, ft_strdup("lexeme"), ft_strdup("value"), &error);
+	token_list_add_word(&token_list, ft_strdup("value"), &error);
 	token_list_clear(&token_list);
 	assert_msg("Test with valgrind: No memory leak.");
 	error_cleanup(&error);

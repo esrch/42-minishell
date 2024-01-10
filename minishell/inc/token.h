@@ -19,13 +19,11 @@ typedef enum s_token_type
 typedef struct s_token
 {
 	t_token_type	type;
-	char			*lexeme;
 	char			*value;
 }	t_token;
 
-void	token_init(t_token *token, t_token_type type, char *lexeme,
-			char *value);
-void	token_init_word(t_token *token, char *lexeme, char *value);
+void	token_init(t_token *token, t_token_type type, char *value);
+void	token_init_word(t_token *token, char *value);
 void	token_init_op(t_token *token, t_token_type token_type);
 void	token_cleanup(t_token *token);
 
