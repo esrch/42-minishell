@@ -1,22 +1,31 @@
-#include "_minishell.h"
+#include "token.h"
 
-void	token_init(t_token *token, t_token_type type, char *value)
+#include <stdlib.h>
+
+static t_token	*token_create(t_token_type type, char *value)
 {
+	t_token	*token;
+
+	token = malloc(sizeof(*token));
+	if (!token)
+		return (NULL);
 	token->type = type;
 	token->value = value;
+	return (token);
 }
 
-void	token_init_word(t_token *token, char *value)
+t_token	*token_create_word(char *value)
 {
-	token_init(token, T_WORD, value);
+	return (token_create(T_WORD, value));
 }
 
-void	token_init_op(t_token *token, t_token_type token_type)
+t_token	*token_create_op(t_token_type token_type)
 {
-	token_init(token, token_type, NULL);
+	return (token_create(token_type, NULL));
 }
 
-void	token_cleanup(t_token *token)
+void	token_destroy(t_token *token)
 {
 	free(token->value);
+	free(token);
 }

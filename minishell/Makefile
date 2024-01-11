@@ -3,7 +3,7 @@ NAME = minishell
 SRC_FOLDER = src/
 SRC_FILES = \
 	main.c \
-	error.c \
+	$(addprefix error/, error.c error2.c) \
 	token.c \
 	pattern_match.c \
 	$(addprefix lexer/, lexer.c lexer_advance.c) \

@@ -10,13 +10,21 @@ void	error_init(t_error *error)
 	error->msg = NULL;
 }
 
-/** Sets error fields
+/** Sets system error
  * 
- * msg should either be NULL or a string that can be freed
 */
-void	error_set(t_error *error, t_error_type type, char *msg)
+void	error_set_system(t_error *error)
 {
-	error->type = type;
+	error->type = ERR_SYSTEM;
+}
+
+/** Sets custom error
+ * 
+ * msg must be a non-NULL string that can be freed
+*/
+void	error_set_custom(t_error *error, char *msg)
+{
+	error->type = ERR_CUSTOM;
 	error->msg = msg;
 }
 
@@ -29,6 +37,13 @@ void	error_cleanup(t_error *error)
 	error_init(error);
 }
 
+/** Prints error with optional prompt
+ * 
+ * Does nothing if no error.
+ * If system error, prints system error (using perror).
+ * If custom error, prints custom message.
+ * If prompt is not NULL, error message is preceded with "<prompt>: ".
+*/
 void	error_print(t_error *error, char *prompt)
 {
 	if (error->type == ERR_NONE)
@@ -47,6 +62,10 @@ void	error_print(t_error *error, char *prompt)
 	ft_putstr_fd("\n", 2);
 }
 
+/** Checks if there is an error
+ * 
+ * Returns true if error is NULL or set to anything else than ERR_NONE
+*/
 bool	has_error(t_error *error)
 {
 	return (!error || error->type != ERR_NONE);

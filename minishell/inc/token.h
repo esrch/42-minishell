@@ -22,9 +22,8 @@ typedef struct s_token
 	char			*value;
 }	t_token;
 
-void	token_init(t_token *token, t_token_type type, char *value);
-void	token_init_word(t_token *token, char *value);
-void	token_init_op(t_token *token, t_token_type token_type);
-void	token_cleanup(t_token *token);
+t_token	*token_create_word(char *value);
+t_token	*token_create_op(t_token_type token_type);
+void	token_destroy(t_token *token);
 
 #endif

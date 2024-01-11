@@ -1,62 +1,5 @@
 #include "minishell_test.h"
 
-void	test_token_list_construct(void)
-{
-	t_token_list	*token_list;
-	t_token			token;
-	t_error			error;
-
-	error_init(&error);
-	token_init_op(&token, T_GREAT);
-	token_list = token_list_construct(&token, &error);
-	assert_addr_eq("Token set", token_list->token, &token);
-	assert_null("Prev is null", token_list->prev);
-	assert_null("Next is null", token_list->next);
-	assert_true("No error", !has_error(&error));
-	free(token_list);
-}
-
-void	test_token_list_add(void)
-{
-	t_token_list	*token_list;
-	t_token			*token1;
-	t_token			*token2;
-	t_error			error;
-
-	token_list = NULL;
-	token1 = malloc(sizeof(*token1));
-	token2 = malloc(sizeof(*token2));
-	token_init_op(token1, T_GREAT);
-	token_init_op(token2, T_LESS);
-
-	error_init(&error);
-	assert_section("Empty list");
-	token_list_add_token(&token_list, token1, &error);
-	assert_not_null("Creates node from NULL token list", token_list);
-	assert_addr_eq("Adds the token to the new node", token1, token_list->token);
-	assert_true("Sets no error", !has_error(&error));
-	error_cleanup(&error);
-
-	assert_section("Second node");
-	token_list_add_token(&token_list, token2, &error);
-	assert_not_null("Creates second node", token_list->next);
-	assert_addr_eq("Adds the token to the second node", token2, token_list->next->token);
-	assert_addr_eq("Links second node to the previous one", token_list, token_list->next->prev);
-	assert_true("Sets no error", !has_error(&error));
-
-	error_init(&error);
-	assert_section("Token is NULL");
-	token_list_add_token(&token_list, NULL, &error);
-	assert_null("Add fails when no token", token_list->next->next);
-	assert_true("Sets the error", has_error(&error));
-	error_cleanup(&error);
-
-	free(token1);
-	free(token2);
-	free(token_list->next);
-	free(token_list);
-}
-
 void	test_token_list_add_op(void)
 {
 	t_token_list	*token_list;
@@ -347,8 +290,6 @@ int	main(void)
 
 	test_suite_init(&test_suite, "Token list");
 
-	test_suite_add_test(&test_suite, "Token list construct", test_token_list_construct);
-	test_suite_add_test(&test_suite, "Token list add", test_token_list_add);
 	test_suite_add_test(&test_suite, "Token list add op", test_token_list_add_op);
 	test_suite_add_test(&test_suite, "Token list add word", test_token_list_add_word);
 	test_suite_add_test(&test_suite, "Token list del", test_token_list_del);

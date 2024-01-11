@@ -1,6 +1,22 @@
 #include "_minishell.h"
 
-void	token_list_add_token(t_token_list **token_list, t_token *token, t_error *error)
+static t_token_list	*token_list_construct(t_token *token, t_error *error)
+{
+	t_token_list	*token_list;
+
+	token_list = malloc(sizeof(*token_list));
+	if (!token_list)
+	{
+		error_set(error, ERR_SYSTEM, NULL);
+		return (NULL);
+	}
+	token_list->prev = NULL;
+	token_list->next = NULL;
+	token_list->token = token;
+	return (token_list);
+}
+
+static void	token_list_add_token(t_token_list **token_list, t_token *token, t_error *error)
 {
 	t_token_list	*new_node;
 	t_token_list	*last;
@@ -8,7 +24,7 @@ void	token_list_add_token(t_token_list **token_list, t_token *token, t_error *er
 	if (!token)
 	{
 		error_set(error, ERR_CUSTOM,
-			ft_strdup("Syntax error: Cannot call token_list_add_token with NULL token"));
+			ft_strdup("token_list_add_token: Cannot call with NULL token"));
 		return ;
 	}
 	new_node = token_list_construct(token, error);
@@ -28,36 +44,28 @@ void	token_list_add_op(t_token_list **token_list, t_token_type token_type, t_err
 {
 	t_token	*token;
 
-	token = malloc(sizeof(*token));
+	token = token_create_op(token_type);
 	if (!token)
 	{
 		error_set(error, ERR_SYSTEM, NULL);
 		return ;
 	}
-	token_init_op(token, token_type);
 	token_list_add_token(token_list, token, error);
 	if (has_error(error))
-	{
-		token_cleanup(token);
-		free(token);
-	}
+		token_destroy(token);
 }
 
 void	token_list_add_word(t_token_list **token_list, char *value, t_error *error)
 {
 	t_token	*token;
 
-	token = malloc(sizeof(*token));
+	token = token_create_word(value);
 	if (!token)
 	{
 		error_set(error, ERR_SYSTEM, NULL);
 		return ;
 	}
-	token_init_word(token, value);
 	token_list_add_token(token_list, token, error);
 	if (has_error(error))
-	{
-		token_cleanup(token);
-		free(token);
-	}
+		token_destroy(token);
 }
