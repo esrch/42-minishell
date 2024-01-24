@@ -1,54 +1,43 @@
 NAME = minishell
-
-SRC_FOLDER = src/
-SRC_FILES = \
+SRCS = $(addprefix src/, \
 	main.c \
-	$(addprefix error/, error.c error2.c) \
-	token.c \
-	pattern_match.c \
-	$(addprefix lexer/, lexer.c lexer_advance.c) \
-	$(addprefix token_list/, token_list.c token_list_2.c token_list_add.c) \
-	$(addprefix ms_tokenizer/, ms_tokenizer.c ms_tokenize_word.c ms_tokenizer_utils.c)
-
-SRCS = $(addprefix $(SRC_FOLDER), $(SRC_FILES))
+	$(addprefix ast_node/, ast_node.c ast_print.c) \
+	$(addprefix char_scanner/, char_scanner.c) \
+	$(addprefix env/, env.c) \
+	$(addprefix ft_error/, ft_error.c) \
+	$(addprefix ft_sprintf_malloc/, ft_sprintf_malloc.c) \
+	$(addprefix parser/, parser.c) \
+	$(addprefix redirection_list/, redirection_list.c) \
+	$(addprefix tl_scanner/, tl_scanner.c) \
+	$(addprefix token/, token.c) \
+	$(addprefix token_list/, token_list.c) \
+	$(addprefix tokenizer/, tokenizer.c) \
+	$(addprefix word_list/, word_list.c) \
+)
 OBJS = $(SRCS:.c=.o)
+LIBFT = libft/libft.a
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -Iinc -Ilibs/libft
-LDFLAGS = -Llibs/libft
-LDLIBS = -lreadline -lhistory -lft
-SANITIZE_FLAGS = -g3 -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -Iinc -Ilibft
+LDFLAGS = -Llibft
+LDLIBS = -lft
 
-.PHONY: all clean fclean re sanitize run valgrind-run test valgrind-test
+.PHONY: all clean fclean re
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
-	$(MAKE) -s --no-print-directory -C libs/libft
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+$(NAME): $(OBJS) $(LIBFT)
+	$(CC) $(LDFLAGS) $(OBJS) -o $(NAME) $(LDLIBS)
+
+$(LIBFT):
+	$(MAKE) -C libft all
 
 clean:
-	$(MAKE) -s --no-print-directory -C libs/libft clean
-	rm -f $(OBJS)
+	$(RM) $(OBJS)
+	$(MAKE) -C libft clean
 
-fclean:
-	$(MAKE) -s --no-print-directory -C libs/libft fclean
-	rm -f $(OBJS)
-	rm -f $(NAME)
+fclean: clean
+	$(RM) $(NAME)
+	$(MAKE) -C libft fclean
 
 re: fclean all
-
-sanitize: CFLAGS += $(SANITIZE_FLAGS)
-sanitize: fclean $(NAME)
-
-run: all
-	./$(NAME)
-
-valgrind-run: all
-	valgrind -- ./$(NAME)
-
-test: run fclean
-
-valgrind-test: valgrind-run fclean
-
-.SILENT:
