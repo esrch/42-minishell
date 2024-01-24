@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "libft.h"
 
 void	error_init(t_error *error)
 {
@@ -37,10 +38,9 @@ void	error_print(t_error *error, char *prompt)
 		perror(prompt);
 		return ;
 	}
-	// Remove dependency on fprintf
 	if (prompt)
-		fprintf(stderr, "%s: ", prompt);
-	fprintf(stderr, "%s\n", error->msg);
+		ft_putstr_fd(prompt, STDERR_FILENO);
+	ft_putendl_fd(error->msg, STDERR_FILENO);
 }
 
 bool	has_error(t_error *error)

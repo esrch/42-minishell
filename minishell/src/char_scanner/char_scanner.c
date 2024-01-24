@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
+#include "libft.h"
 #include "ft_error.h"
 
 void	char_scanner_init(t_char_scanner *scanner, char *src)
@@ -28,16 +28,15 @@ char	char_scanner_advance(t_char_scanner *scanner)
 
 void	char_scanner_advance_until(t_char_scanner *scanner, char *delim)
 {
-	// Remove dependency on <string.h>
 	while (!char_scanner_is_at_end(scanner)
-			&& !strchr(delim, char_scanner_peek(scanner)))
+			&& !ft_strchr(delim, char_scanner_peek(scanner)))
 		scanner->current++;
 }
 
 void	char_scanner_advance_while(t_char_scanner *scanner, char *skip)
 {
 	while (!char_scanner_is_at_end(scanner)
-			&& strchr(skip, char_scanner_peek(scanner)))
+			&& ft_strchr(skip, char_scanner_peek(scanner)))
 		scanner->current++;
 }
 
@@ -78,8 +77,7 @@ char	*char_scanner_extract(t_char_scanner *scanner, t_error *error)
 		error_set_system(error);
 		return (NULL);
 	}
-	extracted[len] = '\0';
-	strncpy(extracted, scanner->src + scanner->start, len);
+	ft_strlcpy(extracted, scanner->src + scanner->start, len + 1);
 	char_scanner_sync_start(scanner);
 	return (extracted);
 }

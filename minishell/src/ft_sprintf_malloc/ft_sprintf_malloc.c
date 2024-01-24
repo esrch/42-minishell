@@ -2,7 +2,7 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
-#include <string.h>
+#include "libft.h"
 
 static int	count_len(char *format, va_list args)
 {
@@ -17,7 +17,13 @@ static int	count_len(char *format, va_list args)
 		if (*format == '%' && format[1] == 's')
 		{
 			s = va_arg(args_cpy, char *);
-			len += strlen(s);
+			len += ft_strlen(s);
+			format += 2;
+		}
+		else if (*format == '%' && format[1] == 'c')
+		{
+			(void) va_arg(args_cpy, int);
+			len++;
 			format += 2;
 		}
 		else
@@ -33,6 +39,7 @@ static int	count_len(char *format, va_list args)
 static char	*fill_string(char *format, va_list args, int len)
 {
 	char	*s;
+	char	c;
 	char	*result;
 	char	*result_cpy;
 
@@ -47,6 +54,12 @@ static char	*fill_string(char *format, va_list args, int len)
 			s = va_arg(args, char *);
 			while (*s)
 				*result_cpy++ = *s++;
+			format += 2;
+		}
+		else if (*format == '%' && format[1] == 'c')
+		{
+			c = va_arg(args, int);
+			*result_cpy++ = c;
 			format += 2;
 		}
 		else

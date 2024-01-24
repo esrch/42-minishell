@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "libft.h"
 #include "ft_error.h"
 
 static t_token	*token_create(t_token_type type, char *value, t_error *error)
@@ -23,29 +23,28 @@ static t_token	*token_create(t_token_type type, char *value, t_error *error)
 
 static char	*token_op_value(t_token_type type, t_error *error)
 {
-	// Remove dependency on <string.h>
 	char	*value;
 	
 	if (type == T_AND_AND)
-		value = strdup("&&");
+		value = ft_strdup("&&");
 	else if (type == T_PIPE)
-		value = strdup("|");
+		value = ft_strdup("|");
 	else if (type == T_PIPE_PIPE)
-		value = strdup("||");
+		value = ft_strdup("||");
 	else if (type == T_GREAT)
-		value = strdup(">");
+		value = ft_strdup(">");
 	else if (type == T_GREAT_GREAT)
-		value = strdup(">>");
+		value = ft_strdup(">>");
 	else if (type == T_LESS)
-		value = strdup("<");
+		value = ft_strdup("<");
 	else if (type == T_LESS_LESS)
-		value = strdup("<<");
+		value = ft_strdup("<<");
 	else if (type == T_PAREN_OPEN)
-		value = strdup("(");
+		value = ft_strdup("(");
 	else if (type == T_PAREN_CLOSE)
-		value = strdup(")");
+		value = ft_strdup(")");
 	else
-		value = strdup("");
+		value = ft_strdup("");
 	if (!value)
 		error_set_system(error);
 	return (value);

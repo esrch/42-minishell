@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
+#include "libft.h"
 #include "ft_error.h"
 
 static t_kv_list	*create_node(char *key, char *value, t_error *error)
@@ -35,8 +35,7 @@ static t_kv_list	**find_node(t_kv_list **list, char *key)
 	current = list;
 	while (*current)
 	{
-		// Remove dependency on <string.h>
-		if (strcmp((*current)->key, key) == 0)
+		if (ft_strncmp((*current)->key, key, ft_strlen(key) + 1) == 0)
 			return (current);
 		current = &(*current)->next;
 	}
@@ -83,12 +82,12 @@ static void	add_envp_entry(t_kv_list **env, char *envp_entry, t_error *error)
 	char		*key;
 	char		*value;
 
-	eq_pos = strchr(envp_entry, '=');
+	eq_pos = ft_strchr(envp_entry, '=');
 	if (!eq_pos)
 		return ;
 	*eq_pos = '\0';
-	key = strdup(envp_entry);
-	value = strdup(eq_pos + 1);
+	key = ft_strdup(envp_entry);
+	value = ft_strdup(eq_pos + 1);
 	*eq_pos = '=';
 	if (!key || !value)
 	{
@@ -142,7 +141,7 @@ void	env_set(t_kv_list **list, char *key, char *value, t_error *error)
 		return ;
 	if (update_node(*list, key, value))
 		return ;
-	key_cpy = strdup(key);
+	key_cpy = ft_strdup(key);
 	if (!key_cpy)
 	{
 		error_set_system(error);
@@ -176,7 +175,7 @@ char	*env_get(t_kv_list *list, char *key, t_error *error)
 	found = find_node(&list, key);
 	if (!found)
 		return (NULL);
-	value_cpy = strdup((*found)->value);
+	value_cpy = ft_strdup((*found)->value);
 	if (!value_cpy)
 		error_set_system(error);
 	return (value_cpy);

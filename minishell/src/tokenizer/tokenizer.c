@@ -1,20 +1,20 @@
 #include "tokenizer.h"
 
 #include <stdlib.h>
-#include <string.h>
+#include "libft.h"
 #include "token_list.h"
 #include "ft_error.h"
 #include "char_scanner.h"
+#include "ft_sprintf_malloc.h"
 
 static bool	is_whitespace(char c)
 {
-	return strchr(WHITESPACE, c) != NULL;
+	return ft_strchr(WHITESPACE, c) != NULL;
 }
 
 static bool	is_metacharacter(char c)
 {
-	// Remove dependency on <string.h>
-	return strchr(METACHARACTERS, c) != NULL;
+	return ft_strchr(METACHARACTERS, c) != NULL;
 }
 
 static void	skip_whitespace(t_char_scanner *scanner)
@@ -25,6 +25,8 @@ static void	skip_whitespace(t_char_scanner *scanner)
 static void	tokenize_op(t_char_scanner *scanner,
 	t_token_list **token_list, t_error *error)
 {
+	char	*err_msg;
+
 	if (char_scanner_match(scanner, "&&"))
 		token_list_add_op(token_list, T_AND_AND, error);
 	else if (char_scanner_match(scanner, "||"))
@@ -44,24 +46,45 @@ static void	tokenize_op(t_char_scanner *scanner,
 	else if (char_scanner_match(scanner, ")"))
 		token_list_add_op(token_list, T_PAREN_CLOSE, error);
 	else
-		// Improve error message
-		error_set_custom(error, strdup("Syntax error"));
+	{
+		err_msg = ft_sprintf_malloc("syntax error near unexpected '%c'", char_scanner_peek(scanner));
+		if (!err_msg)
+			error_set_system(error);
+		else
+			error_set_custom(error, err_msg);
+	}
 }
 
 static void	handle_single_quote(t_char_scanner *scanner, t_error *error)
 {
+	char	*err_msg;
+
 	char_scanner_advance(scanner);
 	char_scanner_advance_until(scanner, "'");
 	if (!char_scanner_match(scanner, "'"))
-		error_set_custom(error, strdup("Syntax error: Unclosed single quote."));
+	{
+		err_msg = ft_strdup("syntax error: Missing closing single quote.");
+		if (!err_msg)
+			error_set_system(error);
+		else
+			error_set_custom(error, err_msg);
+	}
 }
 
 static void	handle_double_quote(t_char_scanner *scanner, t_error *error)
 {
+	char	*err_msg;
+
 	char_scanner_advance(scanner);
 	char_scanner_advance_until(scanner, "\"");
 	if (!char_scanner_match(scanner, "\""))
-		error_set_custom(error, strdup("Syntax error: Unclosed double quote."));
+	{
+		err_msg = ft_strdup("syntax error: Missing closing double quote.");
+		if (!err_msg)
+			error_set_system(error);
+		else
+			error_set_custom(error, err_msg);
+	}
 }
 
 static void	tokenize_word(t_char_scanner *scanner, t_token_list **token_list,

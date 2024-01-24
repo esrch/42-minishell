@@ -1,7 +1,7 @@
 #include "word_list.h"
 
 #include <stdlib.h>
-#include <string.h>
+#include "libft.h"
 #include "ft_error.h"
 
 static t_word_list	*create_node(char *word, t_error *error)
@@ -61,7 +61,6 @@ void	word_list_clear(t_word_list *list)
 
 char	*word_list_to_string(t_word_list *list, t_error *error)
 {
-	// Remove dependency on <string.h>
 	char		*concatenated;
 	int			len;
 	t_word_list	*current;
@@ -70,7 +69,7 @@ char	*word_list_to_string(t_word_list *list, t_error *error)
 	current = list;
 	while (current)
 	{
-		len += strlen(current->word);
+		len += ft_strlen(current->word);
 		current = current->next;
 	}
 	concatenated = malloc(sizeof(*concatenated) * (len + 1));
@@ -81,7 +80,7 @@ char	*word_list_to_string(t_word_list *list, t_error *error)
 	}
 	while (list)
 	{
-		strcat(concatenated, list->word);
+		ft_strlcat(concatenated, list->word, len + 1);
 		list = list->next;
 	}
 	concatenated[len] = '\0';
