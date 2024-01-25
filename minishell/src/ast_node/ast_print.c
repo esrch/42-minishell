@@ -53,7 +53,9 @@ static void	print_cmd(t_ast_node *node)
 
 void	ast_print(t_ast_node *ast, int margin)
 {
-	if (ast->type == AST_CMD)
+	if (!ast)
+		return ;
+	else if (ast->type == AST_CMD)
 		print_cmd(ast);
 	else if (ast->type == AST_GROUP)
 		print_group(ast, margin);

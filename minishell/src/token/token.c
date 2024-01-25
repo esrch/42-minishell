@@ -43,6 +43,8 @@ static char	*token_op_value(t_token_type type, t_error *error)
 		value = ft_strdup("(");
 	else if (type == T_PAREN_CLOSE)
 		value = ft_strdup(")");
+	else if (type == T_EOF)
+		value = ft_strdup("newline");
 	else
 		value = ft_strdup("");
 	if (!value)
@@ -78,7 +80,7 @@ void	token_destroy(t_token *token)
 	free(token);
 }
 
-bool	token_is_redirection(t_token_type type)
+bool	token_is_redirection_type(t_token_type type)
 {
 	return (type == T_LESS
 		|| type == T_LESS_LESS
@@ -86,7 +88,7 @@ bool	token_is_redirection(t_token_type type)
 		|| type == T_GREAT_GREAT);
 }
 
-bool	token_is_and_or(t_token_type type)
+bool	token_is_and_or_type(t_token_type type)
 {
 	return (type == T_AND_AND || type == T_PIPE_PIPE);
 }

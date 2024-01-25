@@ -39,7 +39,10 @@ void	error_print(t_error *error, char *prompt)
 		return ;
 	}
 	if (prompt)
+	{
 		ft_putstr_fd(prompt, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+	}
 	ft_putendl_fd(error->msg, STDERR_FILENO);
 }
 

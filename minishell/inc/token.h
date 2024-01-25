@@ -28,8 +28,8 @@ typedef struct s_token
 t_token	*token_create_op(t_token_type type, t_error *error);
 t_token	*token_create_word(char *value, t_error *error);
 void	token_destroy(t_token *token);
-bool	token_is_redirection(t_token_type type);
-bool	token_is_and_or(t_token_type type);
+bool	token_is_redirection_type(t_token_type type);
+bool	token_is_and_or_type(t_token_type type);
 void	token_print(t_token *token);
 
 #endif /* TOKEN_H */
