@@ -7,6 +7,6 @@
 #define WHITESPACE " \t\n"
 #define METACHARACTERS " \t\n<>|&;()"
 
-t_token_list	*tokenize(char *src, t_error *error);
+t_token_list	*tokenize(char *src);
 
 #endif /* TOKENIZER_H */

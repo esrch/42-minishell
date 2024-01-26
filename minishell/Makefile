@@ -4,7 +4,8 @@ SRCS = $(addprefix src/, \
 	$(addprefix ast/, ast_node.c ast_print.c) \
 	$(addprefix char_scanner/, char_scanner.c) \
 	$(addprefix env/, env.c) \
-	$(addprefix exec/, exec.c) \
+	$(addprefix exec/, exec.c exec_cmd.c exec_pipeline.c exec_and_or.c exec_grouping.c pid_list.c) \
+	$(addprefix global/, global.c) \
 	$(addprefix ft_error/, ft_error.c) \
 	$(addprefix ft_sprintf_malloc/, ft_sprintf_malloc.c) \
 	$(addprefix heredoc/, heredoc.c) \
@@ -21,6 +22,7 @@ LIBFT = libft/libft.a
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -Iinc -Ilibft
+SANITIZE_FLAGS = -g3 -fsanitize=address
 LDFLAGS = -Llibft
 LDLIBS = -lft
 
@@ -29,7 +31,10 @@ LDLIBS = -lft
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(LDFLAGS) $(OBJS) -o $(NAME) $(LDLIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(NAME) $(LDLIBS)
+
+sanitize: CFLAGS += $(SANITIZE_FLAGS)
+sanitize: all
 
 $(LIBFT):
 	$(MAKE) -C libft all

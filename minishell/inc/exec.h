@@ -3,6 +3,6 @@
 
 # include "ast.h"
 
-void	exec_ast(t_ast_node *ast);
+int	exec_ast(t_ast_node *ast);
 
 #endif

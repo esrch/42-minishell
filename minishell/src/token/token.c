@@ -6,7 +6,7 @@
 #include "libft.h"
 #include "ft_error.h"
 
-static t_token	*token_create(t_token_type type, char *value, t_error *error)
+static t_token	*token_create(t_token_type type, char *value)
 {
 	t_token	*token;
 
@@ -17,11 +17,11 @@ static t_token	*token_create(t_token_type type, char *value, t_error *error)
 		token->value = value;
 	}
 	else
-		error_set_system(error);
+		error_print_system();
 	return (token);
 }
 
-static char	*token_op_value(t_token_type type, t_error *error)
+static char	*token_op_value(t_token_type type)
 {
 	char	*value;
 	
@@ -48,30 +48,27 @@ static char	*token_op_value(t_token_type type, t_error *error)
 	else
 		value = ft_strdup("");
 	if (!value)
-		error_set_system(error);
+		error_print_system();
 	return (value);
 }
 
-t_token	*token_create_op(t_token_type type, t_error *error)
+t_token	*token_create_op(t_token_type type)
 {
 	char	*value;
 	t_token	*token;
 
-	value = token_op_value(type, error);
-	if (has_error(error))
+	value = token_op_value(type);
+	if (!value)
 		return (NULL);
-	token = token_create(type, value, error);
-	if (has_error(error))
-	{
+	token = token_create(type, value);
+	if (!token)
 		free(value);
-		return (NULL);
-	}
 	return (token);
 }
 
-t_token	*token_create_word(char *value, t_error *error)
+t_token	*token_create_word(char *value)
 {
-	return (token_create(T_WORD, value, error));
+	return (token_create(T_WORD, value));
 }
 
 void	token_destroy(t_token *token)
@@ -95,29 +92,28 @@ bool	token_is_and_or_type(t_token_type type)
 
 void	token_print(t_token *token)
 {
-	// Remove dependency on printf
 	if (token->type == T_AND_AND)
-		printf("T_AND_AND(%s)", token->value);
+		ft_printf("T_AND_AND(%s)", token->value);
 	else if (token->type == T_PIPE)
-		printf("T_PIPE(%s)", token->value);
+		ft_printf("T_PIPE(%s)", token->value);
 	else if (token->type == T_PIPE_PIPE)
-		printf("T_PIPE_PIPE(%s)", token->value);
+		ft_printf("T_PIPE_PIPE(%s)", token->value);
 	else if (token->type == T_GREAT)
-		printf("T_GREAT(%s)", token->value);
+		ft_printf("T_GREAT(%s)", token->value);
 	else if (token->type == T_GREAT_GREAT)
-		printf("T_GREAT_GREAT(%s)", token->value);
+		ft_printf("T_GREAT_GREAT(%s)", token->value);
 	else if (token->type == T_LESS)
-		printf("T_LESS(%s)", token->value);
+		ft_printf("T_LESS(%s)", token->value);
 	else if (token->type == T_LESS_LESS)
-		printf("T_LESS_LESS(%s)", token->value);
+		ft_printf("T_LESS_LESS(%s)", token->value);
 	else if (token->type == T_PAREN_OPEN)
-		printf("T_PAREN_OPEN(%s)", token->value);
+		ft_printf("T_PAREN_OPEN(%s)", token->value);
 	else if (token->type == T_PAREN_CLOSE)
-		printf("T_PAREN_CLOSE(%s)", token->value);
+		ft_printf("T_PAREN_CLOSE(%s)", token->value);
 	else if (token->type == T_EOF)
-		printf("T_EOF(%s)", token->value);
+		ft_printf("T_EOF(%s)", token->value);
 	else if (token->type == T_WORD)
-		printf("T_WORD(%s)", token->value);
+		ft_printf("T_WORD(%s)", token->value);
 	else
-		printf("<Error>");
+		ft_printf("<Error>");
 }

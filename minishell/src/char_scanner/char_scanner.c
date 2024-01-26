@@ -65,7 +65,7 @@ void	char_scanner_sync_start(t_char_scanner *scanner)
 	scanner->start = scanner->current;
 }
 
-char	*char_scanner_extract(t_char_scanner *scanner, t_error *error)
+char	*char_scanner_extract(t_char_scanner *scanner)
 {
 	char	*extracted;
 	int		len;
@@ -74,7 +74,7 @@ char	*char_scanner_extract(t_char_scanner *scanner, t_error *error)
 	extracted = malloc(sizeof(*extracted) * (len + 1));
 	if (!extracted)
 	{
-		error_set_system(error);
+		error_print_system();
 		return (NULL);
 	}
 	ft_strlcpy(extracted, scanner->src + scanner->start, len + 1);

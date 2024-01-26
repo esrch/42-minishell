@@ -6,7 +6,7 @@
 #include "ft_error.h"
 
 t_ast_node	*ast_node_create_binary(t_ast_node_type type, t_ast_node *left,
-	t_ast_node *right, t_error *error)
+	t_ast_node *right)
 {
 	t_ast_node	*node;
 
@@ -20,11 +20,11 @@ t_ast_node	*ast_node_create_binary(t_ast_node_type type, t_ast_node *left,
 		node->cmd_redirections = NULL;
 	}
 	else
-		error_set_system(error);
+		error_print_system();
 	return (node);
 }
 
-t_ast_node	*ast_node_create_group(t_ast_node *left, t_error *error)
+t_ast_node	*ast_node_create_group(t_ast_node *left)
 {
 	t_ast_node	*node;
 
@@ -38,12 +38,11 @@ t_ast_node	*ast_node_create_group(t_ast_node *left, t_error *error)
 		node->cmd_redirections = NULL;
 	}
 	else
-		error_set_system(error);
+		error_print_system();
 	return (node);
 }
 
-t_ast_node	*ast_node_create_cmd(t_word_list *argv, t_redirection_list *redirections,
-				t_error *error)
+t_ast_node	*ast_node_create_cmd(t_word_list *argv, t_redirection_list *redirections)
 {
 	t_ast_node	*node;
 	
@@ -57,7 +56,7 @@ t_ast_node	*ast_node_create_cmd(t_word_list *argv, t_redirection_list *redirecti
 		node->cmd_redirections = redirections;
 	}
 	else
-		error_set_system(error);
+		error_print_system();
 	return (node);
 }
 

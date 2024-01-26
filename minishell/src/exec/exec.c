@@ -1,6 +1,7 @@
 #include "exec.h"
 #include "exec_internal.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -8,7 +9,7 @@
 #include "word_list.h"
 #include "ft_error.h"
 
-static int	exec_single_cmd(t_ast_node *node)
+int	exec_single_cmd(t_ast_node *node)
 {
 	pid_t	child_pid;
 	int		status;
@@ -25,12 +26,18 @@ static int	exec_single_cmd(t_ast_node *node)
 		return (2);
 }
 
-void	exec_ast(t_ast_node *ast)
+int	exec_ast(t_ast_node *ast)
 {
 	(void) ast;
 
-	if (ast->type == AST_CMD)
-		exec_single_cmd(ast);
+	if (ast->type == AST_AND)
+		return (exec_and(ast));
+	else if (ast->type == AST_OR)
+		return (exec_or(ast));
+	else if (ast->type == AST_GROUP)
+		return (exec_group(ast, true));
+	else if (ast->type == AST_PIPE)
+		return (exec_pipeline(ast));
 	else
-		ft_printf("Not yet implemented\n");
+		return (exec_single_cmd(ast));
 }

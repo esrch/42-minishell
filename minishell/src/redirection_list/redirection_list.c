@@ -5,7 +5,7 @@
 #include "ft_error.h"
 
 static t_redirection_list	*create_node(t_redirection_type type,
-	char *filename, char *here_doc_terminator, t_error *error)
+	char *filename, char *here_doc_terminator)
 {
 	t_redirection_list	*node;
 
@@ -19,7 +19,7 @@ static t_redirection_list	*create_node(t_redirection_type type,
 		node->here_doc_fd = -1;
 	}
 	else
-		error_set_system(error);
+		error_print_system();
 	return (node);
 }
 
@@ -49,26 +49,27 @@ static void	add_node(t_redirection_list **list, t_redirection_list *node)
 		last_node(*list)->next = node;
 }
 
-void	redirection_list_add_file(t_redirection_list **list, t_redirection_type type,
-			char *file, t_error *error)
+t_status	redirection_list_add_file(t_redirection_list **list, t_redirection_type type,
+			char *file)
 {
 	t_redirection_list	*new_node;
 
-	new_node = create_node(type, file, NULL, error);
-	if (has_error(error))
-		return ;
+	new_node = create_node(type, file, NULL);
+	if (!new_node)
+		return (STATUS_ERROR);
 	add_node(list, new_node);
+	return (STATUS_OK);
 }
 
-void	redirection_list_add_heredoc(t_redirection_list **list, char *terminator,
-			t_error *error)
+t_status	redirection_list_add_heredoc(t_redirection_list **list, char *terminator)
 {
 	t_redirection_list	*new_node;
 	
-	new_node = create_node(REDIR_HEREDOC, NULL, terminator, error);
-	if (has_error(error))
-		return ;
+	new_node = create_node(REDIR_HEREDOC, NULL, terminator);
+	if (!new_node)
+		return (STATUS_ERROR);
 	add_node(list, new_node);
+	return (STATUS_OK);
 }
 
 void	redirection_list_clear(t_redirection_list *list)

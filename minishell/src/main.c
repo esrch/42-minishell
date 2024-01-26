@@ -4,6 +4,7 @@
 #include "ast.h"
 #include "exec.h"
 #include "ft_error.h"
+#include "global.h"
 #include "parser.h"
 #include "token_list.h"
 #include "tokenizer.h"
@@ -12,14 +13,15 @@
 int	main(int argc, char **argv)
 {
 	(void) argc;
+	(void) argv;
 
 	char			cmd[1024];
 	int				bytes;
-	t_error			error;
 	t_token_list	*token_list;
 	t_ast_node		*ast;
+	int				exit_status;
 
-	error_init(&error);
+	global_set_program_name(argv[0]);
 
 	// TODO: Setup signals
 
@@ -27,40 +29,33 @@ int	main(int argc, char **argv)
 	bytes = read(STDIN_FILENO, cmd, 1024);
 	if (bytes < 0)
 	{
-		error_set_system(&error);
-		error_print(&error, argv[0]);
+		error_print_system();
 		return (2);
 	}
 	cmd[bytes - 1] = '\0';
 
 	// Tokenize command line
-	token_list = tokenize(cmd, &error);
-	if (has_error(&error))
-	{
-		error_print(&error, argv[0]);
-		error_cleanup(&error);
+	token_list = tokenize(cmd);
+	if (!token_list)
 		return (2);
-	}
 	token_list_print(token_list);
 
 	// Parse command into AST
-	ast = parse(token_list, &error);
+	ast = parse(token_list);
 	token_list_clear(token_list);
-	if (has_error(&error))
-	{
-		error_print(&error, argv[0]);
-		error_cleanup(&error);
+	if (!ast)
 		return (2);
-	}
+	global_set_ast(ast);
 	ast_print(ast, 0);
 
 	// TODO: Init all heredocs
-	heredoc_init(ast, &error);
+	heredoc_init(ast);
 
 	// TODO: Execute AST
-	exec_ast(ast);
+	exit_status = exec_ast(ast);
 
 	// Cleanup
-	error_cleanup(&error);
-	ast_node_destroy(ast);
+	global_clean();
+
+	return (exit_status);
 }

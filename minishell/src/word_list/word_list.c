@@ -4,7 +4,7 @@
 #include "libft.h"
 #include "ft_error.h"
 
-static t_word_list	*create_node(char *word, t_error *error)
+static t_word_list	*create_node(char *word)
 {
 	t_word_list	*new_node;
 
@@ -15,7 +15,7 @@ static t_word_list	*create_node(char *word, t_error *error)
 		new_node->word = word;
 	}
 	else
-		error_set_system(error);
+		error_print_system();
 	return (new_node);
 }
 
@@ -47,17 +47,18 @@ static int	word_list_len(t_word_list *list)
 	return (len);
 }
 
-void	word_list_add(t_word_list **list, char *word, t_error *error)
+t_status	word_list_add(t_word_list **list, char *word)
 {
 	t_word_list	*new_node;
 
-	new_node = create_node(word, error);
-	if (has_error(error))
-		return ;
+	new_node = create_node(word);
+	if (!new_node)
+		return (STATUS_ERROR);
 	if (!*list)
 		*list = new_node;
 	else
 		last_node(*list)->next = new_node;
+	return (STATUS_OK);
 }
 
 void	word_list_clear(t_word_list *list)
@@ -72,7 +73,7 @@ void	word_list_clear(t_word_list *list)
 	}
 }
 
-char	*word_list_to_string(t_word_list *list, t_error *error)
+char	*word_list_to_string(t_word_list *list)
 {
 	char		*concatenated;
 	int			len;
@@ -88,7 +89,7 @@ char	*word_list_to_string(t_word_list *list, t_error *error)
 	concatenated = malloc(sizeof(*concatenated) * (len + 1));
 	if (!concatenated)
 	{
-		error_set_system(error);
+		error_print_system();
 		return (NULL);
 	}
 	while (list)
@@ -100,7 +101,7 @@ char	*word_list_to_string(t_word_list *list, t_error *error)
 	return (concatenated);
 }
 
-char	**word_list_to_array(t_word_list *list, t_error *error)
+char	**word_list_to_array(t_word_list *list)
 {
 	int			i;
 	char		**result;
@@ -111,7 +112,7 @@ char	**word_list_to_array(t_word_list *list, t_error *error)
 	result = malloc(sizeof(*result) * (len + 1));
 	if (!result)
 	{
-		error_set_system(error);
+		error_print_system();
 		return NULL;
 	}
 	i = 0;
@@ -121,7 +122,7 @@ char	**word_list_to_array(t_word_list *list, t_error *error)
 		if (!word_cpy)
 		{
 			ft_free_2d_count((void ***)&result, i);
-			error_set_system(error);
+			error_print_system();
 			return (NULL);
 		}
 		result[i] = word_cpy;

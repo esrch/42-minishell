@@ -3,6 +3,7 @@ Environment
 
 Heredoc
 - Initialize all heredocs before execution
+- Still handle a heredoc that occurs before a parsing error
 
 Execution
 - Execute AST
@@ -14,6 +15,7 @@ Execution
 - Expand shell parameters (+ split words)
 - Expand wildcard (+ split words)
 - Increment SHLVL environment variable
+- Add executable name in error when executable name doesn't exist
 
 Error messages
 - Use program name without initial (e.g., ../test/minishell should have minishell as prompt)

@@ -2,7 +2,6 @@
 # define CHAR_SCANNER_H
 
 # include <stdbool.h>
-# include "ft_error.h"
 
 typedef struct s_char_scanner
 {
@@ -19,6 +18,6 @@ void	char_scanner_advance_while(t_char_scanner *scanner, char *skip);
 bool	char_scanner_match(t_char_scanner *scanner, char *expected);
 bool	char_scanner_is_at_end(t_char_scanner *scanner);
 void	char_scanner_sync_start(t_char_scanner *scanner);
-char	*char_scanner_extract(t_char_scanner *scanner, t_error *error);
+char	*char_scanner_extract(t_char_scanner *scanner);
 
 #endif /* CHAR_SCANNER_H */

@@ -5,14 +5,14 @@
 #include "libft.h"
 #include "ft_error.h"
 
-static t_kv_list	*create_node(char *key, char *value, t_error *error)
+static t_kv_list	*create_node(char *key, char *value)
 {
 	t_kv_list	*new_node;
 
 	new_node = malloc(sizeof(*new_node));
 	if (!new_node)
 	{
-		error_set_system(error);
+		error_print_system();
 		return (NULL);
 	}
 	new_node->next = NULL;
@@ -51,17 +51,18 @@ static t_kv_list	*last_node(t_kv_list *list)
 	return (list);
 }
 
-static void	add_node(t_kv_list **list, char *key, char *value, t_error *error)
+static t_status	add_node(t_kv_list **list, char *key, char *value)
 {
 	t_kv_list	*new_node;
 
-	new_node = create_node(key, value, error);
-	if (has_error(error))
-		return ;
+	new_node = create_node(key, value);
+	if (!new_node)
+		return (STATUS_ERROR);
 	if (!*list)
 		*list = new_node;
 	else
 		last_node(*list)->next = new_node;
+	return (STATUS_OK);
 }
 
 static bool	update_node(t_kv_list *list, char *key, char *value)
@@ -76,7 +77,7 @@ static bool	update_node(t_kv_list *list, char *key, char *value)
 	return (true);
 }
 
-static void	add_envp_entry(t_kv_list **env, char *envp_entry, t_error *error)
+static t_status	add_envp_entry(t_kv_list **env, char *envp_entry)
 {
 	char		*eq_pos;
 	char		*key;
@@ -84,7 +85,7 @@ static void	add_envp_entry(t_kv_list **env, char *envp_entry, t_error *error)
 
 	eq_pos = ft_strchr(envp_entry, '=');
 	if (!eq_pos)
-		return ;
+		return (STATUS_OK);
 	*eq_pos = '\0';
 	key = ft_strdup(envp_entry);
 	value = ft_strdup(eq_pos + 1);
@@ -93,25 +94,26 @@ static void	add_envp_entry(t_kv_list **env, char *envp_entry, t_error *error)
 	{
 		free(key);
 		free(value);
-		return ;
+		error_print_system();
+		return (STATUS_ERROR);
 	}
-	add_node(env, key, value, error);
-	if (has_error(error))
+	if (add_node(env, key, value) == STATUS_ERROR)
 	{
 		free(key);
 		free(value);
+		return (STATUS_ERROR);
 	}
+	return (STATUS_OK);
 }
 
-t_kv_list	*env_create(char **envp, t_error *error)
+t_kv_list	*env_create(char **envp)
 {
 	t_kv_list	*env;
 
 	env = NULL;
 	while (*envp)
 	{
-		add_envp_entry(&env, *envp, error);
-		if (has_error(error))
+		if (add_envp_entry(&env, *envp) == STATUS_ERROR)
 		{
 			env_destroy(env);
 			return (NULL);
@@ -133,23 +135,26 @@ void	env_destroy(t_kv_list *list)
 	}
 }
 
-void	env_set(t_kv_list **list, char *key, char *value, t_error *error)
+t_status	env_set(t_kv_list **list, char *key, char *value)
 {
 	char		*key_cpy;
 
 	if (!list || !key)
-		return ;
+		return (STATUS_OK);
 	if (update_node(*list, key, value))
-		return ;
+		return (STATUS_OK);
 	key_cpy = ft_strdup(key);
 	if (!key_cpy)
 	{
-		error_set_system(error);
-		return ;
+		error_print_system();
+		return (STATUS_ERROR);
 	}
-	add_node(list, key_cpy, value, error);
-	if (has_error(error))
+	if (add_node(list, key_cpy, value) == STATUS_ERROR)
+	{
 		free(key_cpy);
+		return (STATUS_ERROR);
+	}
+	return (STATUS_OK);
 }
 
 void	env_unset(t_kv_list **list, char *key)
@@ -167,7 +172,7 @@ void	env_unset(t_kv_list **list, char *key)
 	*found = next;
 }
 
-char	*env_get(t_kv_list *list, char *key, t_error *error)
+char	*env_get(t_kv_list *list, char *key)
 {
 	t_kv_list	**found;
 	char		*value_cpy;
@@ -177,6 +182,9 @@ char	*env_get(t_kv_list *list, char *key, t_error *error)
 		return (NULL);
 	value_cpy = ft_strdup((*found)->value);
 	if (!value_cpy)
-		error_set_system(error);
+	{
+		error_print_system();
+		return (NULL);
+	}
 	return (value_cpy);
 }

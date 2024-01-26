@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include "libft.h"
+#include "defines.h"
 #include "token_list.h"
 #include "ft_error.h"
 #include "char_scanner.h"
@@ -22,114 +23,108 @@ static void	skip_whitespace(t_char_scanner *scanner)
 	char_scanner_advance_while(scanner, WHITESPACE);
 }
 
-static void	tokenize_op(t_char_scanner *scanner,
-	t_token_list **token_list, t_error *error)
+static t_status	tokenize_op(t_char_scanner *scanner,
+	t_token_list **token_list)
 {
-	char	*err_msg;
-
 	if (char_scanner_match(scanner, "&&"))
-		token_list_add_op(token_list, T_AND_AND, error);
+		return (token_list_add_op(token_list, T_AND_AND));
 	else if (char_scanner_match(scanner, "||"))
-		token_list_add_op(token_list, T_PIPE_PIPE, error);
+		return (token_list_add_op(token_list, T_PIPE_PIPE));
 	else if (char_scanner_match(scanner, "|"))
-		token_list_add_op(token_list, T_PIPE, error);
+		return (token_list_add_op(token_list, T_PIPE));
 	else if (char_scanner_match(scanner, "<<"))
-		token_list_add_op(token_list, T_LESS_LESS, error);
+		return (token_list_add_op(token_list, T_LESS_LESS));
 	else if (char_scanner_match(scanner, "<"))
-		token_list_add_op(token_list, T_LESS, error);
+		return (token_list_add_op(token_list, T_LESS));
 	else if (char_scanner_match(scanner, ">>"))
-		token_list_add_op(token_list, T_GREAT_GREAT, error);
+		return (token_list_add_op(token_list, T_GREAT_GREAT));
 	else if (char_scanner_match(scanner, ">"))
-		token_list_add_op(token_list, T_GREAT, error);
+		return (token_list_add_op(token_list, T_GREAT));
 	else if (char_scanner_match(scanner, "("))
-		token_list_add_op(token_list, T_PAREN_OPEN, error);
+		return (token_list_add_op(token_list, T_PAREN_OPEN));
 	else if (char_scanner_match(scanner, ")"))
-		token_list_add_op(token_list, T_PAREN_CLOSE, error);
+		return (token_list_add_op(token_list, T_PAREN_CLOSE));
 	else
 	{
-		err_msg = ft_sprintf_malloc("syntax error near unexpected '%c'", char_scanner_peek(scanner));
-		if (!err_msg)
-			error_set_system(error);
-		else
-			error_set_custom(error, err_msg);
+		error_print_custom(ft_sprintf_malloc(
+			"syntax error near unexpected '%c'", char_scanner_peek(scanner)));
+		return (STATUS_ERROR);
 	}
 }
 
-static void	handle_single_quote(t_char_scanner *scanner, t_error *error)
+static t_status	handle_single_quote(t_char_scanner *scanner)
 {
-	char	*err_msg;
-
 	char_scanner_advance(scanner);
 	char_scanner_advance_until(scanner, "'");
 	if (!char_scanner_match(scanner, "'"))
 	{
-		err_msg = ft_strdup("syntax error: Missing closing single quote.");
-		if (!err_msg)
-			error_set_system(error);
-		else
-			error_set_custom(error, err_msg);
+		error_print_custom(ft_strdup("syntax error: Missing closing single quote."));
+		return (STATUS_ERROR);
 	}
+	return (STATUS_OK);
 }
 
-static void	handle_double_quote(t_char_scanner *scanner, t_error *error)
+static t_status	handle_double_quote(t_char_scanner *scanner)
 {
-	char	*err_msg;
-
 	char_scanner_advance(scanner);
 	char_scanner_advance_until(scanner, "\"");
 	if (!char_scanner_match(scanner, "\""))
 	{
-		err_msg = ft_strdup("syntax error: Missing closing double quote.");
-		if (!err_msg)
-			error_set_system(error);
-		else
-			error_set_custom(error, err_msg);
+		error_print_custom(ft_strdup("syntax error: Missing closing double quote."));
+		return (STATUS_ERROR);
 	}
+	return (STATUS_OK);
 }
 
-static void	tokenize_word(t_char_scanner *scanner, t_token_list **token_list,
-	t_error *error)
+static t_status	tokenize_word(t_char_scanner *scanner, t_token_list **token_list)
 {
-	char	next_char;
-	char	*extracted;
+	t_status	status;
+	char		next_char;
+	char		*extracted;
 
+	status = STATUS_OK;
 	next_char = char_scanner_peek(scanner);
 	while (!char_scanner_is_at_end(scanner) && !is_metacharacter(next_char))
 	{
 		if (next_char == '\'')
-			handle_single_quote(scanner, error);
+			status = handle_single_quote(scanner);
 		else if (next_char == '"')
-			handle_double_quote(scanner, error);
+			status = handle_double_quote(scanner);
 		else
-			char_scanner_advance(scanner);
-		if (has_error(error))
-			return ;
+			status = char_scanner_advance(scanner);
+		if (status == STATUS_ERROR)
+			return (STATUS_ERROR);
 		next_char = char_scanner_peek(scanner);
 	}
-	extracted = char_scanner_extract(scanner, error);
-	if (has_error(error))
-		return ;
-	token_list_add_word(token_list, extracted, error);
-	if (has_error(error))
+	extracted = char_scanner_extract(scanner);
+	if (!extracted)
+		return (STATUS_ERROR);
+	if (token_list_add_word(token_list, extracted) == STATUS_ERROR)
+	{
 		free(extracted);
+		return (STATUS_ERROR);
+	}
+	return (STATUS_OK);
 }
 
-static void	tokenize_next(t_char_scanner *scanner, t_token_list **token_list,
-	t_error *error)
+static t_status	tokenize_next(t_char_scanner *scanner, t_token_list **token_list)
 {
-	char	next_char;
+	t_status	status;
+	char		next_char;
 
 	next_char = char_scanner_peek(scanner);
 
+	status = STATUS_OK;
 	if (is_whitespace(next_char))
 		skip_whitespace(scanner);
 	else if (is_metacharacter(next_char))
-		tokenize_op(scanner, token_list, error);
+		status = tokenize_op(scanner, token_list);
 	else
-		tokenize_word(scanner, token_list, error);
+		status = tokenize_word(scanner, token_list);
+	return (status);
 }
 
-t_token_list	*tokenize(char *src, t_error *error)
+t_token_list	*tokenize(char *src)
 {
 	t_char_scanner	scanner;
 	t_token_list	*token_list;
@@ -138,16 +133,17 @@ t_token_list	*tokenize(char *src, t_error *error)
 	token_list = NULL;
 	while (!char_scanner_is_at_end(&scanner))
 	{
-		tokenize_next(&scanner, &token_list, error);
-		if (has_error(error))
+		if (tokenize_next(&scanner, &token_list) == STATUS_ERROR)
 		{
 			token_list_clear(token_list);
 			return (NULL);
 		}
 		char_scanner_sync_start(&scanner);
 	}
-	token_list_add_op(&token_list, T_EOF, error);
-	if (has_error(error))
+	if (token_list_add_op(&token_list, T_EOF) == STATUS_ERROR)
+	{
 		token_list_clear(token_list);
+		return (NULL);
+	}
 	return (token_list);
 }
