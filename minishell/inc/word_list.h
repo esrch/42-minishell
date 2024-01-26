@@ -12,5 +12,6 @@ typedef struct s_word_list
 void	word_list_add(t_word_list **list, char *word, t_error *error);
 void	word_list_clear(t_word_list *list);
 char	*word_list_to_string(t_word_list *list, t_error *error);
+char	**word_list_to_array(t_word_list *list, t_error *error);
 
 #endif /* WORD_LIST_H */

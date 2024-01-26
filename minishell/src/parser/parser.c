@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 #include "libft.h"
-#include "ast_node.h"
+#include "ast.h"
 #include "ft_error.h"
 #include "ft_sprintf_malloc.h"
 #include "tl_scanner.h"

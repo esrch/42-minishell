@@ -1,7 +1,7 @@
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "ast_node.h"
+# include "ast.h"
 # include "ft_error.h"
 # include "token_list.h"
 

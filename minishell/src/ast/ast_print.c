@@ -1,4 +1,4 @@
-#include "ast_node.h"
+#include "ast.h"
 
 #include "libft.h"
 #include "word_list.h"

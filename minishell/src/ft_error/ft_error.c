@@ -25,6 +25,11 @@ void	error_set_system(t_error *error)
 
 void	error_set_custom(t_error *error, char *msg)
 {
+	if (!msg)
+	{
+		error_set_system(error);
+		return ;
+	}
 	error->type = ERR_CUSTOM;
 	error->msg = msg;
 }

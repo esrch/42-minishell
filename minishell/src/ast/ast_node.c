@@ -1,4 +1,4 @@
-#include "ast_node.h"
+#include "ast.h"
 
 #include <stdlib.h>
 #include "redirection_list.h"

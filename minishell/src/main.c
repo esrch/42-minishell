@@ -1,11 +1,13 @@
 #include <unistd.h>
 
 #include "libft.h"
-#include "ast_node.h"
+#include "ast.h"
+#include "exec.h"
 #include "ft_error.h"
 #include "parser.h"
 #include "token_list.h"
 #include "tokenizer.h"
+#include "heredoc.h"
 
 int	main(int argc, char **argv)
 {
@@ -19,6 +21,9 @@ int	main(int argc, char **argv)
 
 	error_init(&error);
 
+	// TODO: Setup signals
+
+	// Read command line
 	bytes = read(STDIN_FILENO, cmd, 1024);
 	if (bytes < 0)
 	{
@@ -28,6 +33,7 @@ int	main(int argc, char **argv)
 	}
 	cmd[bytes - 1] = '\0';
 
+	// Tokenize command line
 	token_list = tokenize(cmd, &error);
 	if (has_error(&error))
 	{
@@ -37,6 +43,7 @@ int	main(int argc, char **argv)
 	}
 	token_list_print(token_list);
 
+	// Parse command into AST
 	ast = parse(token_list, &error);
 	token_list_clear(token_list);
 	if (has_error(&error))
@@ -47,6 +54,13 @@ int	main(int argc, char **argv)
 	}
 	ast_print(ast, 0);
 
+	// TODO: Init all heredocs
+	heredoc_init(ast, &error);
+
+	// TODO: Execute AST
+	exec_ast(ast);
+
+	// Cleanup
 	error_cleanup(&error);
 	ast_node_destroy(ast);
 }

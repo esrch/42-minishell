@@ -1,0 +1,27 @@
+Environment
+- Initialize environment with SHLVL and PWD even if it is empty
+
+Heredoc
+- Initialize all heredocs before execution
+
+Execution
+- Execute AST
+	- Command
+	- Pipeline
+	- And
+	- Or
+- Handle redirections
+- Expand shell parameters (+ split words)
+- Expand wildcard (+ split words)
+- Increment SHLVL environment variable
+
+Error messages
+- Use program name without initial (e.g., ../test/minishell should have minishell as prompt)
+- Use new error_set_custom which checks if the message is NULL
+
+Signals
+- Manage signals in case of prompt, execution or heredoc
+- Prevent ^C from appearing on Ctrl-C
+
+Built-ins
+- env/export: Handle "export a", which makes a appear in export (with no value), but not in env

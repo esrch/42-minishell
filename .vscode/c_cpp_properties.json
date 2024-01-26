@@ -3,9 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
                 "${workspaceFolder}/minishell/inc",
-                "${workspaceFolder}/minishell/inc"
+                "${workspaceFolder}/minishell/libft"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

@@ -58,6 +58,7 @@ void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
 void	ft_free_2d(void ***arr_ptr);
+void	ft_free_2d_count(void ***arr_ptr, int count);
 
 // Linked list
 t_list	*ft_lstnew(void *content);

@@ -34,6 +34,19 @@ static t_word_list	*last_node(t_word_list *list)
 	return (list);
 }
 
+static int	word_list_len(t_word_list *list)
+{
+	int	len;
+
+	len = 0;
+	while (list)
+	{
+		len++;
+		list = list->next;
+	}
+	return (len);
+}
+
 void	word_list_add(t_word_list **list, char *word, t_error *error)
 {
 	t_word_list	*new_node;
@@ -85,4 +98,36 @@ char	*word_list_to_string(t_word_list *list, t_error *error)
 	}
 	concatenated[len] = '\0';
 	return (concatenated);
+}
+
+char	**word_list_to_array(t_word_list *list, t_error *error)
+{
+	int			i;
+	char		**result;
+	int			len;
+	char		*word_cpy;
+
+	len = word_list_len(list);
+	result = malloc(sizeof(*result) * (len + 1));
+	if (!result)
+	{
+		error_set_system(error);
+		return NULL;
+	}
+	i = 0;
+	while (list)
+	{
+		word_cpy = ft_strdup(list->word);
+		if (!word_cpy)
+		{
+			ft_free_2d_count((void ***)&result, i);
+			error_set_system(error);
+			return (NULL);
+		}
+		result[i] = word_cpy;
+		i++;
+		list = list->next;
+	}
+	result[len] = NULL;
+	return (result);
 }
