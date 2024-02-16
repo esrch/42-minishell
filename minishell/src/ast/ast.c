@@ -25,7 +25,7 @@ t_ast_node	*ast_create_binary(t_ast_type type, t_ast_node *left, t_ast_node *rig
  * 
  * Returns 0 on success, or -1 on allocation error.
 */
-int	ast_create_subshell(t_ast_node *left, t_redir_list	*redirections)
+t_ast_node	*ast_create_subshell(t_ast_node *left, t_redir_list	*redirections)
 {
 	t_ast_node	*new_node;
 

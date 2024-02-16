@@ -2,7 +2,8 @@
 #include "tokenize_internal.h"
 
 #include "ft_error.h"
-#include "scanner.h";
+#include "libft.h"
+#include "scanner.h"
 
 /** Handle single quoted strings within a word
  * 
@@ -53,7 +54,6 @@ static void	add_extracted_word(t_scanner *scanner, t_token_list **token_list,
 void	tokenize_word(t_scanner *scanner, t_token_list **token_list, t_error *error)
 {
 	char		next_char;
-	char		*extracted;
 
 	next_char = scanner_peek(scanner);
 	while (!scanner_is_at_end(scanner) && !is_metacharacter(next_char))

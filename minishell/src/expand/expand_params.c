@@ -42,7 +42,7 @@ static int	handle_double_quote(t_scanner *scanner, t_word_list **segments)
 	while (!scanner_match(scanner, "\""))
 	{
 		scanner_advance_until(scanner, "$\"");
-		if (scanner_check(scanner, "$"))
+		if (scanner_check(scanner, '$'))
 			status = handle_param(scanner, segments);
 		if (status != 0)
 			return (status);
@@ -58,7 +58,7 @@ static int	handle_double_quote(t_scanner *scanner, t_word_list **segments)
 */
 static int	handle_normal(t_scanner *scanner, t_word_list **segments)
 {
-	scanner_advance_until("$'\"");
+	scanner_advance_until(scanner, "$'\"");
 	if (scanner_is_at_end(scanner))
 		return (extract_segment(scanner, segments));
 	return (0);

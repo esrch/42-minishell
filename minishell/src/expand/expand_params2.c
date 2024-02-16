@@ -58,7 +58,6 @@ int	add_param(char *param_name, t_word_list **segments)
 int	handle_param(t_scanner *scanner, t_word_list **segments)
 {
 	char	*param_name;
-	char	*param_value;
 	int		status;
 
 	if (extract_segment(scanner, segments) != 0)

@@ -6,6 +6,7 @@
 
 #include "ft_error.h"
 #include "ft_sprintf.h"
+#include "libft.h"
 #include "redirection.h"
 #include "tl_scanner.h"
 #include "token.h"
@@ -29,7 +30,7 @@ static void	parse_redirections(t_tl_scanner *scanner,
 	t_token	*redir_token;
 	t_token	*word_token;
 
-	while (token_is_redirection_type(tl_scanner_peek(scanner)))
+	while (token_is_redirection_type(tl_scanner_peek(scanner)->type))
 	{
 		redir_token = tl_scanner_advance(scanner);
 		if (!tl_scanner_check_type(scanner, T_WORD))
@@ -56,11 +57,11 @@ static t_ast_node	*parse_subshell(t_tl_scanner *scanner, t_error *error)
 	t_ast_node	*left;
 	t_ast_node	*subshell_node;
 
-	(void) tl_scanner_match(scanner, T_PAREN_OPEN);
+	(void) tl_scanner_match_type(scanner, T_PAREN_OPEN);
 	left = parse_and_or(scanner, error);
 	if (has_error(error))
 		return (NULL);
-	if (!tl_scanner_match(scanner, T_PAREN_CLOSE))
+	if (!tl_scanner_match_type(scanner, T_PAREN_CLOSE))
 	{
 		if (tl_scanner_is_at_end(scanner))
 			error_set_custom(error, ft_strdup("syntax error: missing closing parenthesis"));

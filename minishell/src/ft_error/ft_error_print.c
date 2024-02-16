@@ -12,7 +12,7 @@ void	error_print_system(char *prefix)
 {
 	char	*prog_name;
 
-	prog_name = global_prog_name_get();
+	prog_name = global_get_prog_name();
 	if (!prefix)
 		perror(prog_name);
 	else
@@ -28,7 +28,7 @@ void	error_print_system(char *prefix)
 */
 void	error_print_custom(char *msg)
 {
-	ft_putstr_fd(global_prog_name_get(), STDERR_FILENO);
+	ft_putstr_fd(global_get_prog_name(), STDERR_FILENO);
 	ft_putstr_fd(": ", STDERR_FILENO);
 	ft_putendl_fd(msg, STDERR_FILENO);
 }

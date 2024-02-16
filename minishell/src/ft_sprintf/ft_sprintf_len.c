@@ -23,7 +23,7 @@ static char	*handle_special(char *format, int *len, va_list args)
 	if (*format == 'c')
 	{
 		*len += 1;
-		(void) va_arg(args, char);
+		(void) va_arg(args, int);
 		return (format + 1);
 	}
 	if (*format == 's')

@@ -44,7 +44,8 @@ t_ast_node	*parse_and_or(t_tl_scanner *scanner, t_error *error)
 	node = parse_pipeline(scanner, error);
 	if (has_error(error))
 		return (NULL);
-	while (tl_scanner_check_type(scanner, T_AND) || tl_scanner_check(scanner, T_OR))
+	while (tl_scanner_check_type(scanner, T_AND)
+		|| tl_scanner_check_type(scanner, T_OR))
 	{
 		tmp_node = extend_and_or(scanner, node, error);
 		if (has_error(error))

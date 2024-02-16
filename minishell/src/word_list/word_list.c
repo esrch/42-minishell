@@ -56,21 +56,28 @@ int	word_list_add(t_word_list **list, char *word)
 int		word_list_add_sorted(t_word_list **list, char *word)
 {
 	t_word_list	*new_node;
+	char		*word_cpy;
 	t_word_list	*current_node;
 
 	if (!list)
-		return ;
+		return (0);
 	new_node = malloc(sizeof(*new_node));
 	if (!new_node)
 		return (-1);
-	new_node->word = word;
-	if (!*list || ft_strcmp((*list)->word, word) >= 0)
+	word_cpy = ft_strdup(word);
+	if (!word_cpy)
 	{
-		new_node->next = *list;
+		free(new_node);
+		return (-1);
+	}
+	new_node->word = word_cpy;
+	current_node = *list;
+	if (!current_node || ft_strcmp(current_node->word, word) >= 0)
+	{
+		new_node->next = current_node;
 		*list = new_node;
 		return (0);
 	}
-	current_node = *list;
 	while (current_node->next
 		&& ft_strcmp(current_node->next->word, word) >= 0)
 		current_node = current_node->next;

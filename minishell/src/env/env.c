@@ -37,7 +37,7 @@ int		env_init(char **envp)
 			*eq_pos = '=';
 			if (result != 0)
 			{
-				kv_list_destroy(env);
+				kv_list_destroy(*env);
 				return (-1);
 			}
 		}

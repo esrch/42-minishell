@@ -21,8 +21,8 @@ static bool	is_whitespace(char c)
 */
 static void	handle_whitespace(t_scanner *scanner)
 {
-	scanner_advance_while(&scanner, " \t\n");
-	scanner_skip(&scanner);
+	scanner_advance_while(scanner, " \t\n");
+	scanner_skip(scanner);
 }
 
 /** Handles a word.

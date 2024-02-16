@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 
+#include "libft.h"
 #include "token.h"
 
 /** Returns the last node of a list, or NULL for a NULL list.
@@ -24,7 +25,6 @@ int	token_list_add_op(t_token_list **list, t_token_type type)
 {
 	t_token			*token;
 	t_token_list	*new_node;
-	t_token_list	*current_node;
 
 	if (!list)
 		return (-1);
@@ -54,7 +54,6 @@ int	token_list_add_word(t_token_list **list, char *value)
 {
 	t_token			*token;
 	t_token_list	*new_node;
-	t_token_list	*current_node;
 
 	if (!list)
 		return (-1);

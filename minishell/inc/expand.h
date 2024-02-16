@@ -1,8 +1,8 @@
 #ifndef EXPAND_H
 # define EXPAND_H
 
-# include "ast.h"
+# include "word_list.h"
 
-char	**expand_argv(t_ast_node *cmd_node);
+char	**expand_argv(t_word_list *cmd_node);
 
 #endif

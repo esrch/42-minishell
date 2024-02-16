@@ -14,12 +14,12 @@
  * 
  * Returns 0 on success, and -1 on error.
 */
-static int	*load_files(DIR *dir, t_word_list **files)
+static int	load_files(DIR *dir, t_word_list **files)
 {
 	struct dirent	*dirent;
 
 	*files = NULL;
-	dirent = readir(dir);
+	dirent = readdir(dir);
 	while (dirent)
 	{
 		if (word_list_add_sorted(files, dirent->d_name) != 0)
@@ -27,7 +27,7 @@ static int	*load_files(DIR *dir, t_word_list **files)
 			word_list_destroy(*files);
 			return (-1);
 		}
-		dirent = readir(dir);
+		dirent = readdir(dir);
 	}
 	return (0);
 }
@@ -80,7 +80,7 @@ static t_word_list	*expand_wildcard_word(char *word, t_word_list *files)
 	{
 		if (wildcard_match(word, files->word))
 		{
-			if (add_file(&matching_files, files->word) != 0)
+			if (word_list_add(&matching_files, files->word) != 0)
 			{
 				word_list_destroy(matching_files);
 				return (NULL);
@@ -88,7 +88,7 @@ static t_word_list	*expand_wildcard_word(char *word, t_word_list *files)
 		}
 		files = files->next;
 	}
-	if (!matching_files && word_list_add(matching_files, word) != 0)
+	if (!matching_files && word_list_add(&matching_files, word) != 0)
 		return (NULL);
 	return (matching_files);
 }
@@ -110,8 +110,8 @@ t_word_list	*expand_wildcard(t_word_list *argv)
 	expanded_argv = NULL;
 	while (argv)
 	{
-		expanded_word = expand_wildcard_word(argv->word, files, &expanded_word);
-		if (!expanded_word);
+		expanded_word = expand_wildcard_word(argv->word, files);
+		if (!expanded_word)
 		{
 			word_list_destroy(expanded_argv);
 			word_list_destroy(files);

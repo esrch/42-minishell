@@ -10,7 +10,7 @@
  * 
  * Returns the allocated string, or NULL on error.
 */
-char	*ft_sprintf_malloc(char *format, ...)
+char	*ft_sprintf(char *format, ...)
 {
 	char	*result;
 	va_list	args;

@@ -13,17 +13,16 @@
 static int	setup_heredoc(t_redir_list *heredoc_node)
 {
 	int		pipe_fd[2];
-	int		eof_len;
 	char	*line;
 
 	if (pipe(pipe_fd) != 0)
 		return (-1);
-	eof_len = ft_strlen(heredoc_node->word);
 	write(STDOUT_FILENO, "> ", 2);
 	line = get_next_line(STDIN_FILENO);
-	while (line && ft_strncmp(line, heredoc_node->word, eof_len + 1) != 0)
+	while (line && ft_strncmp(line, heredoc_node->word, ft_strlen(line) - 1) != 0)
 	{
 		write(pipe_fd[1], line, ft_strlen(line));
+		write(STDOUT_FILENO, "> ", 2);
 		line = get_next_line(STDIN_FILENO);
 	}
 	close(pipe_fd[1]);

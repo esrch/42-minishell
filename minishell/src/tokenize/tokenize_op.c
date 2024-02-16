@@ -2,15 +2,16 @@
 #include "tokenize_internal.h"
 
 #include "ft_error.h"
+#include "ft_sprintf.h"
 #include "scanner.h"
-#include "token_list.h";
+#include "token_list.h"
 
 /** Sets a syntax error due to an unexpected character
  * 
 */
 static void	set_syntax_error(t_scanner *scanner, t_error *error)
 {
-	error_set_custom(error, ft_sprintf_malloc(
+	error_set_custom(error, ft_sprintf(
 		"syntax error near unexpected '%c'", scanner_peek(scanner)));
 }
 

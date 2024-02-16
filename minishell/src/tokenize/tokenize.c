@@ -57,7 +57,7 @@ static bool	is_whitespace(char c)
  * 
  * Metacharacters are space, tab, newline, <, >, |, &, ;, (, ).
 */
-static bool	is_metacharacter(char c)
+ bool	is_metacharacter(char c)
 {
 	return ft_strchr(METACHARACTERS, c) != NULL;
 }

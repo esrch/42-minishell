@@ -5,7 +5,7 @@ OBJS = $(SRCS:.c=.o)
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -Iinc -Ilibs/libft
 LDFLAGS = -Llibs/libft
-LDLIBS = -lreadline -lhistory -lft
+LDLIBS = -lreadline -lft
 SANITIZE_FLAGS = -g3 -fsanitize=address
 
 .PHONY: all clean fclean re sanitize run valgrind-run test valgrind-test

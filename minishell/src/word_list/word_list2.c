@@ -66,7 +66,7 @@ char	**word_list_to_arr(t_word_list *list)
 	i = 0;
 	while (list)
 	{
-		arr[i] == ft_strdup(list->word);
+		arr[i] = ft_strdup(list->word);
 		if (!arr[i])
 		{
 			ft_free_2d_count((void ***) arr, i);

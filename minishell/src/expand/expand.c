@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "ast.h"
+#include "libft.h"
 
 static t_word_list	*expand_argv_params(t_word_list *argv)
 {
@@ -29,27 +30,6 @@ static t_word_list	*expand_argv_params(t_word_list *argv)
 		word_list_append(&expanded_argv, split_word);
 		argv = argv->next;
 	}
-	expanded_argv = NULL;
-	return (expanded_argv);
-}
-
-static t_word_list	*expand_argv_wildcard(t_word_list *argv)
-{
-	t_word_list	*expanded_argv;
-	t_word_list	*expanded_word;
-
-	while (argv)
-	{
-		expanded_word = expand_wildcard(argv->word);
-		if (!expanded_word)
-		{
-			word_list_destroy(expanded_argv);
-			return (NULL);
-		}
-		word_list_append(&expanded_argv, expanded_word);
-		argv = argv->next;
-	}
-	expanded_argv = NULL;
 	return (expanded_argv);
 }
 
@@ -59,16 +39,16 @@ static t_word_list	*expand_argv_wildcard(t_word_list *argv)
  * 
  * Returns the expanded params on success, or NULL on error.
 */
-char	**expand_argv(t_ast_node *cmd_node)
+char	**expand_argv(t_word_list *argv)
 {
 	char		**result;
 	t_word_list	*expanded_params_argv;
 	t_word_list	*expanded_wildcard_argv;
 
-	expanded_params_argv = expand_argv_param(cmd_node->cmd_argv);
+	expanded_params_argv = expand_argv_params(argv);
 	if (!expanded_params_argv)
 		return (NULL);
-	expanded_wildcard_argv = expand_argv_wildcard(expanded_params_argv);
+	expanded_wildcard_argv = expand_wildcard(expanded_params_argv);
 	word_list_destroy(expanded_params_argv);
 	if (!expanded_wildcard_argv)
 		return (NULL);
