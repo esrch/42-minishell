@@ -1,34 +1,13 @@
 #include "token_list.h"
 
 #include <stdlib.h>
-#include "libft.h"
-#include "defines.h"
+
 #include "token.h"
-#include "ft_error.h"
 
-static t_token_list	*create_node(t_token *token)
-{
-	t_token_list	*new_node;
-
-	new_node = malloc(sizeof(*new_node));
-	if (new_node)
-	{
-		new_node->token = token;
-		new_node->prev = NULL;
-		new_node->next = NULL;
-	}
-	else
-		error_print_system();
-	return (new_node);
-}
-
-static void	destroy_node(t_token_list *node)
-{
-	token_destroy(node->token);
-	free(node);
-}
-
-static t_token_list	*last_node(t_token_list *list)
+/** Returns the last node of a list, or NULL for a NULL list.
+ * 
+*/
+static t_token_list	*token_list_last(t_token_list *list)
 {
 	if (!list)
 		return (NULL);
@@ -37,70 +16,94 @@ static t_token_list	*last_node(t_token_list *list)
 	return (list);
 }
 
-static t_status	add_token(t_token_list **list, t_token *token)
+/** Adds a token of operator type type to the given list.
+ * 
+ * Returns 0 in case of success, or -1 in case of allocation error.
+*/
+int	token_list_add_op(t_token_list **list, t_token_type type)
 {
+	t_token			*token;
 	t_token_list	*new_node;
+	t_token_list	*current_node;
 
-	new_node = create_node(token);
+	if (!list)
+		return (-1);
+	token = token_create_op(type);
+	if (!token)
+		return (-1);
+	new_node = malloc(sizeof(*new_node));
 	if (!new_node)
-		return (STATUS_ERROR);
+	{
+		token_destroy(token);
+		return (-1);
+	}
+	new_node->next = NULL;
+	new_node->token = token;
 	if (!*list)
 		*list = new_node;
 	else
-		last_node(*list)->next = new_node;
-	return (STATUS_OK);
+		token_list_last(*list)->next = new_node;
+	return (0);
 }
 
-t_status	token_list_add_op(t_token_list **list, t_token_type type)
+/** Adds a word token with the given value of to the given list.
+ * 
+ * Returns 0 in case of success, or -1 in case of allocation error.
+*/
+int	token_list_add_word(t_token_list **list, char *value)
 {
-	t_token	*token;
+	t_token			*token;
+	t_token_list	*new_node;
+	t_token_list	*current_node;
 
-	token = token_create_op(type);
-	if (!token)
-		return (STATUS_ERROR);
-	if (add_token(list, token) == STATUS_ERROR)
-	{
-		token_destroy(token);
-		return (STATUS_ERROR);
-	}
-	return (STATUS_OK);
-}
-
-t_status	token_list_add_word(t_token_list **list, char *value)
-{
-	t_token	*token;
-
+	if (!list)
+		return (-1);
 	token = token_create_word(value);
 	if (!token)
-		return (STATUS_ERROR);
-	if (add_token(list, token) == STATUS_ERROR)
+		return (-1);
+	new_node = malloc(sizeof(*new_node));
+	if (!new_node)
 	{
 		token_destroy(token);
-		return (STATUS_ERROR);
+		return (-1);
 	}
-	return (STATUS_OK);
+	new_node->next = NULL;
+	new_node->token = token;
+	if (!*list)
+		*list = new_node;
+	else
+		token_list_last(*list)->next = new_node;
+	return (0);
 }
 
-void	token_list_clear(t_token_list *list)
+/** Frees the memory allocated for the token list
+ * 
+*/
+void	token_list_destroy(t_token_list *list)
 {
-	t_token_list	*next;
+	t_token_list	*next_node;
 
 	while (list)
 	{
-		next = list->next;
-		destroy_node(list);
-		list = next;
+		next_node = list->next;
+		token_destroy(list->token);
+		free(list);
+		list = next_node;
 	}
 }
 
+/** Prints the token list to standard out
+ * 
+ * Prints the list as a space separated list of token values.
+*/
 void	token_list_print(t_token_list *list)
 {
-	while (list)
+	if (!list)
+		return ;
+	while (list->next)
 	{
-		token_print(list->token);
-		if (list->next)
-			ft_printf(" ");
+		ft_printf("%s ", list->token->value);
 		list = list->next;
 	}
-	ft_printf("\n");
+	ft_printf("%s", list->token->value);
 }

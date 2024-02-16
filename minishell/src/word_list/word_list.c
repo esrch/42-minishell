@@ -1,31 +1,13 @@
 #include "word_list.h"
 
 #include <stdlib.h>
+
 #include "libft.h"
-#include "ft_error.h"
 
-static t_word_list	*create_node(char *word)
-{
-	t_word_list	*new_node;
-
-	new_node = malloc(sizeof(*new_node));
-	if (new_node)
-	{
-		new_node->next = NULL;
-		new_node->word = word;
-	}
-	else
-		error_print_system();
-	return (new_node);
-}
-
-static void	destroy_node(t_word_list *node)
-{
-	free(node->word);
-	free(node);
-}
-
-static t_word_list	*last_node(t_word_list *list)
+/** Returns the last node of the word list,
+ * or NULL for an empty list.
+*/
+static t_word_list	*word_list_last(t_word_list *list)
 {
 	if (!list)
 		return (NULL);
@@ -34,101 +16,94 @@ static t_word_list	*last_node(t_word_list *list)
 	return (list);
 }
 
-static int	word_list_len(t_word_list *list)
-{
-	int	len;
-
-	len = 0;
-	while (list)
-	{
-		len++;
-		list = list->next;
-	}
-	return (len);
-}
-
-t_status	word_list_add(t_word_list **list, char *word)
+/** Adds a copy of word to the given list.
+ * 
+ * The word is first copied before being added.
+ * 
+ * Returns 0 on success, or -1 on allocation error.
+*/
+int	word_list_add(t_word_list **list, char *word)
 {
 	t_word_list	*new_node;
+	char		*word_cpy;
 
-	new_node = create_node(word);
+	if (!list)
+		return (-1);
+	new_node = malloc(sizeof(*new_node));
 	if (!new_node)
-		return (STATUS_ERROR);
+		return (-1);
+	word_cpy = ft_strdup(word);
+	if (!word_cpy)
+	{
+		free(new_node);
+		return (-1);
+	}
+	new_node->next = NULL;
+	new_node->word = word_cpy;
 	if (!*list)
 		*list = new_node;
 	else
-		last_node(*list)->next = new_node;
-	return (STATUS_OK);
+		word_list_last(*list)->next = new_node;
+	return (0);
 }
 
-void	word_list_clear(t_word_list *list)
+/** Adds a copy of word to the given list, inserting it in alphabetical order.
+ * 
+ * The word is first copied before being added.
+ * 
+ * Returns 0 on success, or -1 on allocation error.
+*/
+int		word_list_add_sorted(t_word_list **list, char *word)
 {
-	t_word_list	*next;
+	t_word_list	*new_node;
+	t_word_list	*current_node;
+
+	if (!list)
+		return ;
+	new_node = malloc(sizeof(*new_node));
+	if (!new_node)
+		return (-1);
+	new_node->word = word;
+	if (!*list || ft_strcmp((*list)->word, word) >= 0)
+	{
+		new_node->next = *list;
+		*list = new_node;
+		return (0);
+	}
+	current_node = *list;
+	while (current_node->next
+		&& ft_strcmp(current_node->next->word, word) >= 0)
+		current_node = current_node->next;
+	new_node->next = current_node->next;
+	current_node->next = new_node;
+	return (0);
+}
+
+/** Frees the memory allocated for a word list
+ * 
+*/
+void	word_list_destroy(t_word_list *list)
+{
+	t_word_list	*next_node;
 
 	while (list)
 	{
-		next = list->next;
-		destroy_node(list);
-		list = next;
+		next_node = list->next;
+		free(list->word);
+		free(list);
+		list = next_node;
 	}
 }
 
-char	*word_list_to_string(t_word_list *list)
+/** Appends addition to list
+ * 
+*/
+void	word_list_append(t_word_list **list, t_word_list *addition)
 {
-	char		*concatenated;
-	int			len;
-	t_word_list	*current;
-
-	len = 0;
-	current = list;
-	while (current)
-	{
-		len += ft_strlen(current->word);
-		current = current->next;
-	}
-	concatenated = malloc(sizeof(*concatenated) * (len + 1));
-	if (!concatenated)
-	{
-		error_print_system();
-		return (NULL);
-	}
-	while (list)
-	{
-		ft_strlcat(concatenated, list->word, len + 1);
-		list = list->next;
-	}
-	concatenated[len] = '\0';
-	return (concatenated);
-}
-
-char	**word_list_to_array(t_word_list *list)
-{
-	int			i;
-	char		**result;
-	int			len;
-	char		*word_cpy;
-
-	len = word_list_len(list);
-	result = malloc(sizeof(*result) * (len + 1));
-	if (!result)
-	{
-		error_print_system();
-		return NULL;
-	}
-	i = 0;
-	while (list)
-	{
-		word_cpy = ft_strdup(list->word);
-		if (!word_cpy)
-		{
-			ft_free_2d_count((void ***)&result, i);
-			error_print_system();
-			return (NULL);
-		}
-		result[i] = word_cpy;
-		i++;
-		list = list->next;
-	}
-	result[len] = NULL;
-	return (result);
+	if (!addition)
+		return ;
+	if (!*list)
+		*list = addition;
+	else
+		word_list_last(*list)->next = addition;
 }

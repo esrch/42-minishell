@@ -2,6 +2,14 @@
 	"files.associations": {
 		"minishell.h": "c",
 		"char_tokenizer.h": "c",
-		"token.h": "c"
+		"token.h": "c",
+		"scanner.h": "c",
+		"global.h": "c",
+		"ast.h": "c",
+		"token_list.h": "c",
+		"exec_internal.h": "c",
+		"unistd.h": "c",
+		"path.h": "c",
+		"ft_sprintf.h": "c"
 	}
 }

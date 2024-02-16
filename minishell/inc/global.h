@@ -3,9 +3,9 @@
 
 # include "ast.h"
 
-void	global_clean(void);
-void	global_set_program_name(char *argv0);
-char	*global_get_program_name(void);
-void	global_set_ast(t_ast_node *ast);
+void	global_prog_name_init(char *argv0);
+char	global_prog_name_get(void);
+void	global_ast_set(t_ast_node *ast);
+void	global_cleanup(void);
 
 #endif

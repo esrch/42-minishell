@@ -1,23 +1,28 @@
 #include "global.h"
 #include "global_internal.h"
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <unistd.h>
 #include "ast.h"
+#include "env.h"
 
-static t_global	*get_global()
+/** Returns the address of the global structure
+ * 
+*/
+static t_global	*get_global(void)
 {
 	static t_global	global;
 
 	return (&global);
 }
 
-void	global_set_program_name(char *argv0)
+/** Initializes the global program name based on the value of argv[0].
+ * 
+ * If argv[0] contains a slash, the name is the string after the last slash.
+ * Otherwise, the name is the full argv[0].
+*/
+void	global_init_prog_name(char *argv0)
 {
-	int			i;
-	int			last_slash_pos;
-	t_global	*global;
+	int	i;
+	int	last_slash_pos;
 
 	last_slash_pos = -1;
 	i = 0;
@@ -27,29 +32,38 @@ void	global_set_program_name(char *argv0)
 			last_slash_pos = i;
 		i++;
 	}
-	global = get_global();
-	global->program_name = argv0 + (last_slash_pos + 1);
+	get_global()->prog_name = argv0 + last_slash_pos + 1;
 }
 
-char	*global_get_program_name(void)
+/** Returns the value of the global program name
+ * 
+*/
+char	*global_get_prog_name(void)
 {
-	return (get_global()->program_name);
+	return (get_global()->prog_name);
 }
 
+/** Updates the global AST
+ * 
+*/
 void	global_set_ast(t_ast_node *ast)
 {
 	t_global	*global;
-	
+
 	global = get_global();
 	if (global->ast)
-		ast_node_destroy(global->ast);
+		ast_destroy(global->ast);
 	global->ast = ast;
 }
 
-void	global_clean(void)
+/** Cleans up the global data, as well as the environment
+ * 
+*/
+void	global_cleanup(void)
 {
 	t_global	*global;
 
 	global = get_global();
-	ast_node_destroy(global->ast);
+	if (global->ast)
+		ast_destroy(global->ast);
 }

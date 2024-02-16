@@ -1,119 +1,127 @@
 #include "token.h"
 
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include "libft.h"
-#include "ft_error.h"
 
-static t_token	*token_create(t_token_type type, char *value)
+#include "libft.h"
+
+/** Returns the string value of an operator token,
+ * or NULL if invalid.
+ * 
+ * The returned value needs to be freed.
+*/
+static char	*op_value(t_token_type type)
+{
+	if (type == T_AND)
+		return (ft_strdup("&&"));
+	else if (type == T_OR)
+		return (ft_strdup("||"));
+	else if (type == T_PIPE)
+		return (ft_strdup("|"));
+	else if (type == T_REDIR_IN)
+		return (ft_strdup("<"));
+	else if (type == T_REDIR_OUT)
+		return (ft_strdup(">"));
+	else if (type == T_REDIR_HEREDOC)
+		return (ft_strdup("<<"));
+	else if (type == T_REDIR_APPEND)
+		return (ft_strdup(">>"));
+	else if (type == T_PAREN_OPEN)
+		return (ft_strdup("("));
+	else if (type == T_PAREN_CLOSE)
+		return (ft_strdup(")"));
+	else if (type == T_EOF)
+		return (ft_strdup("newline"));
+	return (NULL);
+}
+
+/** Creates a new token for an operator.
+ * 
+ * It automatically sets the right value based on the type.
+ * Returns the new token, or NULL in case of allocation error.
+*/
+t_token	*token_create_op(t_token_type type)
 {
 	t_token	*token;
 
 	token = malloc(sizeof(*token));
-	if (token)
-	{
-		token->type = type;
-		token->value = value;
-	}
-	else
-		error_print_system();
-	return (token);
-}
-
-static char	*token_op_value(t_token_type type)
-{
-	char	*value;
-	
-	if (type == T_AND_AND)
-		value = ft_strdup("&&");
-	else if (type == T_PIPE)
-		value = ft_strdup("|");
-	else if (type == T_PIPE_PIPE)
-		value = ft_strdup("||");
-	else if (type == T_GREAT)
-		value = ft_strdup(">");
-	else if (type == T_GREAT_GREAT)
-		value = ft_strdup(">>");
-	else if (type == T_LESS)
-		value = ft_strdup("<");
-	else if (type == T_LESS_LESS)
-		value = ft_strdup("<<");
-	else if (type == T_PAREN_OPEN)
-		value = ft_strdup("(");
-	else if (type == T_PAREN_CLOSE)
-		value = ft_strdup(")");
-	else if (type == T_EOF)
-		value = ft_strdup("newline");
-	else
-		value = ft_strdup("");
-	if (!value)
-		error_print_system();
-	return (value);
-}
-
-t_token	*token_create_op(t_token_type type)
-{
-	char	*value;
-	t_token	*token;
-
-	value = token_op_value(type);
-	if (!value)
-		return (NULL);
-	token = token_create(type, value);
 	if (!token)
-		free(value);
+		return (NULL);
+	token->type = type;
+	token->value = op_value(type);
+	if (!token->value)
+	{
+		free(token);
+		return (NULL);
+	}
 	return (token);
 }
 
+/** Creates a token for a word.
+ * 
+ * Returns the new token, or NULL in case of allocation error.
+*/
 t_token	*token_create_word(char *value)
 {
-	return (token_create(T_WORD, value));
+	t_token	*token;
+
+	token = malloc(sizeof(*token));
+	if (!token)
+		return (NULL);
+	token->type = T_WORD;
+	token->value = value;
+	return (token);
 }
 
+/** Frees the memory allocated for a token
+ * 
+*/
 void	token_destroy(t_token *token)
 {
+	if (!token)
+		return ;	
 	free(token->value);
 	free(token);
 }
 
+/** Checks if the token type is a redirection type
+ * 
+*/
 bool	token_is_redirection_type(t_token_type type)
 {
-	return (type == T_LESS
-		|| type == T_LESS_LESS
-		|| type == T_GREAT
-		|| type == T_GREAT_GREAT);
+	return (type == T_REDIR_IN
+		|| type == T_REDIR_OUT
+		|| type == T_REDIR_HEREDOC
+		|| type == T_REDIR_APPEND);
 }
 
-bool	token_is_and_or_type(t_token_type type)
-{
-	return (type == T_AND_AND || type == T_PIPE_PIPE);
-}
-
+/** Prints the token value to standard output
+ * 
+*/
 void	token_print(t_token *token)
 {
-	if (token->type == T_AND_AND)
-		ft_printf("T_AND_AND(%s)", token->value);
+	if (!token)
+		return ;
+	if (token->type == T_WORD)
+		ft_printf("T_WORD(%s)", token->value);
+	else if (token->type == T_AND)
+		ft_printf("T_AND(%s)", token->value);
+	else if (token->type == T_OR)
+		ft_printf("T_OR(%s)", token->value);
 	else if (token->type == T_PIPE)
 		ft_printf("T_PIPE(%s)", token->value);
-	else if (token->type == T_PIPE_PIPE)
-		ft_printf("T_PIPE_PIPE(%s)", token->value);
-	else if (token->type == T_GREAT)
-		ft_printf("T_GREAT(%s)", token->value);
-	else if (token->type == T_GREAT_GREAT)
-		ft_printf("T_GREAT_GREAT(%s)", token->value);
-	else if (token->type == T_LESS)
-		ft_printf("T_LESS(%s)", token->value);
-	else if (token->type == T_LESS_LESS)
-		ft_printf("T_LESS_LESS(%s)", token->value);
+	else if (token->type == T_REDIR_IN)
+		ft_printf("T_REDIR_IN(%s)", token->value);
+	else if (token->type == T_REDIR_OUT)
+		ft_printf("T_REDIR_OUT(%s)", token->value);
+	else if (token->type == T_REDIR_HEREDOC)
+		ft_printf("T_REDIR_HEREDOC(%s)", token->value);
+	else if (token->type == T_REDIR_APPEND)
+		ft_printf("T_REDIR_APPEND(%s)", token->value);
 	else if (token->type == T_PAREN_OPEN)
 		ft_printf("T_PAREN_OPEN(%s)", token->value);
 	else if (token->type == T_PAREN_CLOSE)
 		ft_printf("T_PAREN_CLOSE(%s)", token->value);
-	else if (token->type == T_EOF)
-		ft_printf("T_EOF(%s)", token->value);
-	else if (token->type == T_WORD)
-		ft_printf("T_WORD(%s)", token->value);
 	else
-		ft_printf("<Error>");
+		ft_printf("T_EOF(%s)", token->value);
 }

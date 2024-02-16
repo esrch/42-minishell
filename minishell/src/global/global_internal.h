@@ -5,7 +5,7 @@
 
 typedef struct s_global
 {
-	char		*program_name;
+	char		*prog_name;
 	t_ast_node	*ast;
 }	t_global;
 
