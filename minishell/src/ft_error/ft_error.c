@@ -1,56 +1,72 @@
 #include "ft_error.h"
+#include "ft_error_internal.h"
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include "libft.h"
 
-/** Initializes error to no error.
+/** Creates a new error.
+ * 
+ * Error code is set to 0.
+ * 
+ * Returns a new error, or NULL on error.
+*/
+t_error	*ft_error_create(void)
+{
+	t_error	*error;
+
+	error = malloc(sizeof(*error));
+	if (!error)
+		return (NULL);
+	error->type = ERR_NONE;
+	error->code = 0;
+	error->msg = NULL;
+	return (error);
+}
+
+/** Frees the memory for the error.
  * 
 */
-void	error_init(t_error *error)
+void	ft_error_destroy(t_error *error)
 {
-	error->type = E_NONE;
+	if (!error)
+		return ;
+	free(error->msg);
+	free(error);
+}
+
+/** Resets the error.
+ * 
+ * Resets the code to 0, frees the error message if present.
+*/
+void	ft_error_reset(t_error *error)
+{
+	error->type = ERR_NONE;
+	error->code = 0;
+	free(error->msg);
 	error->msg = NULL;
 }
 
-/** Checks whether there is an error
+/** Sets or gets the error prefix.
  * 
+ * If prefix is NULL, returns the error prefix.
+ * Otherwise, sets the prefix to the new value,
+ * and returns the error prefix.
 */
-bool	has_error(t_error *error)
+char	*ft_error_prefix(char *prefix)
 {
-	return (error->type != E_NONE);
+	static char	*internal_prefix = NULL;
+
+	if (prefix)
+		internal_prefix = prefix;
+	return (internal_prefix);
 }
 
-/** Sets the error as a system error.
+/** Checks if an error is set.
  * 
 */
-void	error_set_system(t_error *error)
+bool	ft_has_error(t_error *error)
 {
-	error_clear(error);
-	error->type = E_SYSTEM;
-}
-
-/** Sets the error as a custom error with a custom message.
- * 
- * If msg is NULL, sets the error as a system error
- * (assumes an allocation error).
-*/
-void	error_set_custom(t_error *error, char *msg)
-{
-	free(error->msg);
-	if (!msg)
-		error_set_system(error);
-	else
-	{
-		error->type = E_CUSTOM;
-		error->msg = msg;
-	}
-}
-
-/** Clears the error and frees any allocated memory
- * 
-*/
-void	error_clear(t_error *error)
-{
-	free(error->msg);
-	error_init(error);
+	return (error->type != ERR_NONE);
 }

@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/minishell/inc",
-                "${workspaceFolder}/minishell/libs/libft"
+                "${workspaceFolder}/minishell/libs/libft",
+                "${workspaceFolder}/test/inc"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

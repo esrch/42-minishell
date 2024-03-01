@@ -4,13 +4,15 @@
 # include <stdbool.h>
 
 # include "ft_error.h"
+# include "word_list.h"
 
 typedef struct s_path_info
 {
-	char	*path;
+	char	*full_path;
 	bool	is_exec;
 }	t_path_info;
 
-int	path_search(char *filename, char *path, t_path_info *path_info);
+t_word_list	*path_build_list(char *env_path, char *filename, t_error *error);
+t_path_info	path_find(t_word_list *paths);
 
 #endif

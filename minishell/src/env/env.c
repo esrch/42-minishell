@@ -1,49 +1,24 @@
 #include "env.h"
-#include "env_internal.h"
 
 #include <stdlib.h>
 
-#include "kv_list.h"
 #include "libft.h"
 
-/** Returns the global env value address.
- * 
-*/
-t_kv_list	**env_value(void)
+static void	free_value(void *value)
 {
-	static t_kv_list	*env = NULL;
-
-	return (&env);
+	free(value);
 }
 
-/** Initializes the environment from envp.
+/** Returns the global env hash map, or NULL on error.
  * 
- * Returns 0 on success, or -1 on allocation error.
 */
-int		env_init(char **envp)
+t_hash_map	*env(void)
 {
-	t_kv_list	**env;
-	char		*eq_pos;
-	int			result;
+	static t_hash_map	*env_value = NULL;
 
-	env = env_value();
-	while (*envp)
-	{
-		eq_pos = ft_strchr(*envp, '=');
-		if (eq_pos)
-		{
-			*eq_pos = '\0';
-			result = kv_list_add(env, *envp, eq_pos + 1);
-			*eq_pos = '=';
-			if (result != 0)
-			{
-				kv_list_destroy(*env);
-				return (-1);
-			}
-		}
-		envp++;
-	}
-	return (0);
+	if (!env_value)
+		env_value = hash_map_create(free_value);
+	return (env_value);
 }
 
 /** Frees the memory allocated for the environment.
@@ -51,8 +26,57 @@ int		env_init(char **envp)
 */
 void	env_destroy(void)
 {
-	t_kv_list	**env;
+	hash_map_destroy(env());
+}
 
-	env = env_value();
-	kv_list_destroy(*env);
+/** Sets an environment paramenter value for a given key.
+ * 
+ * The key and value are copied before being stored in the environment.
+ * 
+ * Returns 0 on success, or -1 on error.
+*/
+int	env_set(char *key, char *value)
+{
+	t_hash_map	*env_value;
+	char		*value_cpy;
+	int			result;
+	
+	env_value = env();
+	if (!env_value)
+		return (-1);
+	value_cpy = ft_strdup(value);
+	if (!value_cpy)
+		return (-1);
+	result = hash_map_set(env_value, key, value_cpy);
+	if (result != 0)
+		free(value_cpy);
+	return (result);
+}
+
+/** Unsets an environment key if it exists.
+ * 
+ * Does nothing if the key doesn't exist in the environment.
+*/
+void		env_unset(char *key)
+{
+	t_hash_map	*env_value;
+
+	env_value = env();
+	if (!env_value)
+		return ;
+	hash_map_unset(env_value, key);
+}
+
+/** Returns the value associated with the key in the environment.
+ * 
+ * Returns the value if found, or NULL if the key is not present.
+*/
+char		*env_get(char *key)
+{
+	t_hash_map	*env_value;
+
+	env_value = env();
+	if (!env_value)
+		return (NULL);
+	return ((char *) hash_map_get(env_value, key));
 }
