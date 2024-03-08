@@ -18,5 +18,6 @@ t_redir_list	*redir_list_last(t_redir_list *list);
 void			redir_list_close_all(t_redir_list *list);
 t_redir_list	*redir_list_apply(t_redir_list *list);
 void			redir_list_read_heredocs(t_redir_list *list);
+void			redir_list_print(t_redir_list *list);
 
 #endif

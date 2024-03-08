@@ -3,6 +3,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "libft.h"
+
 /** Opens a file if required according to the node type.
  * 
  * Returns the opened file's file descriptor. Could be -1 on error.
@@ -62,4 +64,25 @@ t_redir_list	*redir_list_apply(t_redir_list *list)
 		current = current->next;
 	}
 	return (NULL);
+}
+
+/** Prints the redirection list
+ * 
+*/
+void	redir_list_print(t_redir_list *list)
+{
+	while (list)
+	{
+		if (list->type == T_REDIR_IN)
+			ft_printf("%s(<)", list->word);
+		else if (list->type == T_REDIR_OUT)
+			ft_printf("%s(>)", list->word);
+		else if (list->type == T_REDIR_HEREDOC)
+			ft_printf("%s(<<)", list->word);
+		else
+			ft_printf("%s(>>)", list->word);
+		if (list->next)
+			ft_printf(" ");
+		list = list->next;
+	}
 }

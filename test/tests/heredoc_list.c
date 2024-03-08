@@ -31,8 +31,6 @@ int	main(void)
 	t_test_suite	test_suite;
 
 	test_suite_init(&test_suite, "Heredoc list");
-
 	test_suite_add_test(&test_suite, "Basic operations", test_basic_ops);
-
 	test_suite_run(&test_suite);
 }
