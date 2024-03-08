@@ -29,6 +29,7 @@ t_ast_node	*ast_create_cmd(t_redir_list *redirections, t_word_list *cmd_argv);
 void		ast_destroy(t_ast_node *ast);
 void		ast_foreach(t_ast_node *ast, void (*f)(t_ast_node *node, void *arg),
 				void *arg);
+t_ast_node	*ast_at(t_ast_node *ast, char *path);
 void		ast_print(t_ast_node *ast, int margin);
 
 #endif

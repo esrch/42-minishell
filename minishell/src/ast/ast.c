@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 
+#include "libft.h"
 #include "redir_list.h"
 
 /** Create a binary AST node with left and right sides.
@@ -86,5 +87,4 @@ void	ast_foreach(t_ast_node *ast, void (*f)(t_ast_node *node, void *arg),
 	ast_foreach(ast->left, f, arg);
 	f(ast, arg);
 	ast_foreach(ast->right, f, arg);
-	
 }

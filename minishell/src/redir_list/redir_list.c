@@ -3,12 +3,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "libft.h"
 #include "token.h"
 
 /** Adds a redirection to the redirection list.
  * 
  * If the token type is not a redirection, no node is added,
  * but no error is returned.
+ * Allocates a copy of the word before saving.
  * 
  * Returns 0 on success, or -1 on error.
 */
@@ -23,7 +25,12 @@ int	redir_list_add(t_redir_list **list, t_token_type type, char *word)
 		return (-1);
 	new_node->next = NULL;
 	new_node->type = type;
-	new_node->word = word;
+	new_node->word = ft_strdup(word);
+	if (!new_node->word)
+	{
+		free(new_node);
+		return (-1);
+	}
 	new_node->fd = -1;
 	if (!*list)
 		*list = new_node;

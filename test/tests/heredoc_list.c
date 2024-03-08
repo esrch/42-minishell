@@ -13,8 +13,8 @@ static void	test_basic_ops(void)
 	heredocs = NULL;
 	node1 = NULL;
 	node2 = NULL;
-	redir_list_add(&node1, T_REDIR_HEREDOC, ft_strdup("eof1"));
-	redir_list_add(&node2, T_REDIR_HEREDOC, ft_strdup("eof2"));
+	redir_list_add(&node1, T_REDIR_HEREDOC, "eof1");
+	redir_list_add(&node2, T_REDIR_HEREDOC, "eof2");
 
 	heredoc_list_add(&heredocs, node1);
 	heredoc_list_add(&heredocs, node2);
