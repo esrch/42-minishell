@@ -11,6 +11,9 @@ OBJS = $(SRCS:.c=.o)
 TEST_SRCS = $(shell find tests/* -type f -name *.c)
 TEST_OBJS = $(TEST_SRCS:.c=.o)
 TESTS = $(notdir $(basename $(TEST_SRCS)))
+
+TEST_UTILS_SRCS = $(shell find utils/* -type f -name *.c)
+TEST_UTILS_OBJS = $(TEST_UTILS_SRCS:.c=.o);
 #Flags
 CFLAGS = -Wall -Wextra -Werror -Iinc $(patsubst %, -I%, $(INC))
 LDFLAGS = -Llibs
@@ -28,7 +31,7 @@ endif
 all: $(TESTS)
 
 .SECONDEXPANSION:
-$(TESTS): %: $$(patsubst .c, .o, $$(wildcard tests/$$*.c)) $(OBJS)
+$(TESTS): %: $$(patsubst .c, .o, $$(wildcard tests/$$*.c)) $(OBJS) $(TEST_UTILS_OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o out/$* $(LDLIBS)
 	$(VALGRIND_PREFIX) ./out/$*
 	$(RM) ./out/$*
@@ -36,6 +39,7 @@ $(TESTS): %: $$(patsubst .c, .o, $$(wildcard tests/$$*.c)) $(OBJS)
 clean:
 	$(RM) $(OBJS)
 	$(RM) $(TEST_OBJS)
+	$(RM) $(TEST_UTILS_OBJS)
 	$(RM) $(wildcard ./out/*)
 
 .SILENT:

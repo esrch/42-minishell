@@ -48,3 +48,16 @@ t_word_list	*word_list_at(t_word_list *list, size_t index)
 	}
 	return (list);
 }
+
+/** Appends addition to list
+ * 
+*/
+void	word_list_append(t_word_list **list, t_word_list *addition)
+{
+	if (!addition)
+		return ;
+	if (!*list)
+		*list = addition;
+	else
+		word_list_last(*list)->next = addition;
+}

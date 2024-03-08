@@ -14,6 +14,7 @@
 		"minishell_test.h": "c",
 		"dyn_arr.h": "c",
 		"ft_error_internal.h": "c",
-		"word_list.h": "c"
+		"word_list.h": "c",
+		"test_utils.h": "c"
 	}
 }

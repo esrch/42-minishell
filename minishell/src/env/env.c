@@ -4,11 +4,6 @@
 
 #include "libft.h"
 
-static void	free_value(void *value)
-{
-	free(value);
-}
-
 /** Returns the global env hash map, or NULL on error.
  * 
 */
@@ -17,7 +12,7 @@ t_hash_map	*env(void)
 	static t_hash_map	*env_value = NULL;
 
 	if (!env_value)
-		env_value = hash_map_create(free_value);
+		env_value = hash_map_create(free);
 	return (env_value);
 }
 

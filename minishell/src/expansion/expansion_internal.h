@@ -1,0 +1,7 @@
+#ifndef EXPANSION_INTERNAL_H
+# define EXPANSION_INTERNAL_H
+
+# define EXP_LETTERS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+# define EXP_NUMBERS "0123456789"
+
+#endif

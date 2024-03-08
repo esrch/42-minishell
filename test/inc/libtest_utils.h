@@ -1,5 +1,5 @@
-#ifndef TEST_UTILS_H
-# define TEST_UTILS_H
+#ifndef LIBTEST_UTILS_H
+# define LIBTEST_UTILS_H
 # include <stdlib.h>
 # include <string.h>
 # include <stdio.h>

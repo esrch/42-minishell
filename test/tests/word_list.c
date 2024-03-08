@@ -69,6 +69,75 @@ static void	test_append(void)
 	assert_msg("Manual check: No leaks");
 }
 
+static void	test_remove(void)
+{
+	t_word_list	*list;
+
+	list = NULL;
+	word_list_add(&list, "a");
+	word_list_add(&list, "b");
+	word_list_add(&list, "c");
+	word_list_add(&list, "d");
+
+	assert_section("Remove from the middle");
+	word_list_remove(&list, word_list_at(list, 1));
+	assert_int_eq("Reduced the number of elements", 3, word_list_len(list));
+	assert_str_eq("First element correct", "a", word_list_at(list, 0)->word);
+	assert_str_eq("Second element correct", "c", word_list_at(list, 1)->word);
+
+	assert_section("Remove from the end");
+	word_list_remove(&list, word_list_last(list));
+	assert_int_eq("Reduced the number of elements", 2, word_list_len(list));
+	assert_str_eq("Last element correct", "c", word_list_last(list)->word);
+
+	assert_section("Remove from the beginning");
+	word_list_remove(&list, list);
+	assert_int_eq("Reduced the number of elements", 1, word_list_len(list));
+	assert_str_eq("First element correct", "c", word_list_last(list)->word);
+
+	assert_section("Remove the last remaining element");
+	word_list_remove(&list, list);
+	assert_int_eq("Reduced the number of elements", 0, word_list_len(list));
+	assert_null("List is empty", list);
+
+	assert_section("Remove from an empty list");
+	word_list_remove(&list, NULL);
+	assert_int_eq("Keeps the number of elements to 0", 0, word_list_len(list));
+	assert_msg("Manual check: No error");
+}
+
+static void	test_remove_empty(void)
+{
+	t_word_list	*list;
+
+	list = NULL;
+	word_list_add(&list, "");
+	word_list_add(&list, "a");
+	word_list_add(&list, "tmp");
+	free(word_list_at(list, 2)->word);
+	word_list_at(list, 2)->word = NULL;
+	word_list_add(&list, "c");
+	word_list_add(&list, "");
+	word_list_add(&list, "e");
+	word_list_add(&list, "");
+
+	assert_section("Setup");
+	assert_int_eq("List contains 7 elements", 7, word_list_len(list));
+	assert_str_eq("First element's word is an empty string", "", word_list_at(list, 0)->word);
+	assert_null("Third element's word is NULL", word_list_at(list, 2)->word);
+	assert_str_eq("Fifth element's word is an empty string", "", word_list_at(list, 4)->word);
+	assert_str_eq("Last element's word is an empty string", "", word_list_last(list)->word);
+
+	assert_section("Remove empty");
+	word_list_remove_empty(&list);
+	assert_int_eq("List contains 3 elements", 3, word_list_len(list));
+	assert_str_eq("First element is correct", "a", word_list_at(list, 0)->word);
+	assert_str_eq("Second element is correct", "c", word_list_at(list, 1)->word);
+	assert_str_eq("First element is correct", "e", word_list_at(list, 2)->word);
+
+	word_list_destroy(list);
+}
+
 static void	test_to_string(void)
 {
 	t_word_list	*words;
@@ -128,6 +197,8 @@ int	main(void)
 	test_suite_add_test(&test_suite, "Basic operations", test_basic_ops);
 	test_suite_add_test(&test_suite, "Add sorted", test_add_sorted);
 	test_suite_add_test(&test_suite, "Append", test_append);
+	test_suite_add_test(&test_suite, "Remove", test_remove);
+	test_suite_add_test(&test_suite, "Remove empty", test_remove_empty);
 	test_suite_add_test(&test_suite, "To string", test_to_string);
 	test_suite_add_test(&test_suite, "To array", test_to_arr);
 	test_suite_run(&test_suite);

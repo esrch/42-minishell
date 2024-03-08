@@ -4,17 +4,62 @@
 
 #include "libft.h"
 
-/** Appends addition to list
+/** Removes an element from the list.
  * 
 */
-void	word_list_append(t_word_list **list, t_word_list *addition)
+void	word_list_remove(t_word_list **list, t_word_list *element)
 {
-	if (!addition)
+	t_word_list	*curr;
+	t_word_list	*prev;
+
+	if (!list || !*list || !element)
 		return ;
-	if (!*list)
-		*list = addition;
+	curr = *list;
+	prev = NULL;
+	while (curr)
+	{
+		if (curr == element)
+			break ;
+		prev = curr;
+		curr = curr->next;
+	}
+	if (!curr)
+		return ;
+	if (!prev)
+		*list = curr->next;
 	else
-		word_list_last(*list)->next = addition;
+		prev->next = curr->next;
+	curr->next = NULL;
+	word_list_destroy(curr);
+}
+
+/** Removes empty (NULL or empty string) elements from the list.
+ * 
+*/
+void	word_list_remove_empty(t_word_list **list)
+{
+	t_word_list	*curr;
+	t_word_list	*prev;
+	t_word_list	*next;
+
+	curr = *list;
+	prev = NULL;
+	while (curr)
+	{
+		next = curr->next;
+		if (!curr->word || ft_strlen(curr->word) == 0)
+		{
+			if (prev)
+				prev->next = curr->next;
+			else
+				*list = curr->next;
+			free(curr->word);
+			free(curr);
+		}
+		else
+			prev = curr;
+		curr = next;
+	}
 }
 
 /** Converts a word list to a string.

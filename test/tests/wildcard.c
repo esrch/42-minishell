@@ -16,6 +16,7 @@ void	test_wildcard_match(void)
 	ASSERT_MATCH("A\"'A\"", "A'A");
 	ASSERT_MATCH("A\"*\"A", "A*A");
 	ASSERT_MATCH("A'A'", "AA");
+	ASSERT_MATCH("\"A\"*'A'", "ACA");
 	ASSERT_MATCH("A'\"'A", "A\"A");
 	ASSERT_MATCH("A'*'A", "A*A");
 

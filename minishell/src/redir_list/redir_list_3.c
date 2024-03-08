@@ -8,6 +8,7 @@
 /** Reads heredoc from stdin for the node, and sets the
  * node's fd to the read end of the pipe used.
  * 
+ * Returns 0, or -1 if the heredoc was interrupted by a SIGINT.
 */
 static void	read_heredoc(t_redir_list *node)
 {
@@ -15,13 +16,15 @@ static void	read_heredoc(t_redir_list *node)
 	char	*line;
 
 	pipe(_pipe);
-	line = readline("> ");
-	while (line && ft_strcmp(line, node->word) != 0)
+	write(STDOUT_FILENO, "> ", 2);
+	line = get_next_line(STDIN_FILENO);
+	while (line && ft_strncmp(line, node->word, ft_strlen(line) - 1) != 0)
 	{
 		write(_pipe[1], line, ft_strlen(line));
 		write(_pipe[1], "\n", 1);
 		free(line);
-		line = readline("> ");
+		write(STDOUT_FILENO, "> ", 2);
+		line = get_next_line(STDIN_FILENO);
 	}
 	free(line);
 	close(_pipe[1]);
