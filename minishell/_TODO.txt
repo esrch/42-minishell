@@ -1,12 +1,9 @@
-ast
-parse
 reader
 builtins
 signal
 exec
 	expand argv
 	expand redirects
-read heredoc in subprocess to handle signals correctly
 
 Attention:
 - If $VAR doesn't exist, having "$VAR" as a command gives no error.

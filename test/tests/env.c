@@ -78,6 +78,34 @@ static void	test_init_shlvl(void)
 	free(envp);
 }
 
+static int	str_arr_contains(char **arr, char *s)
+{
+	while (*arr)
+	{
+		if (ft_strcmp(*arr, s) == 0)
+			return (1);
+		arr++;
+	}
+	return (0);
+}
+
+static void	test_to_arr(void)
+{
+	char	**arr;
+
+	env_set("ABC", "DEF");
+	env_set("GHI", "");
+	env_set("JKL", NULL);
+
+	arr = env_to_arr();	
+	assert_true("Array contains ABC=DEF", str_arr_contains(arr, "ABC=DEF"));
+	assert_true("Array contains GHI=", str_arr_contains(arr, "GHI="));
+	assert_true("Array doesn't contain JKL", !str_arr_contains(arr, "JKL"));
+	assert_true("Array doesn't contain JKL=", !str_arr_contains(arr, "JKL="));
+
+	ft_free_2d((void ***) &arr);
+}
+
 int	main(void)
 {
 	t_test_suite	test_suite;
@@ -85,6 +113,7 @@ int	main(void)
 	test_suite_init(&test_suite, "Environment");
 	test_suite_add_test(&test_suite, "Basic operations", test_basic_ops);
 	test_suite_add_test(&test_suite, "Init SHLVL", test_init_shlvl);
+	test_suite_add_test(&test_suite, "To array", test_to_arr);
 	test_suite_run(&test_suite);
 
 	env_destroy();

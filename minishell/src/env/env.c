@@ -39,6 +39,12 @@ int	env_set(char *key, char *value)
 	env_value = env();
 	if (!env_value)
 		return (-1);
+	if (!value)
+	{
+		if (hash_map_set(env_value, key, value) != 0)
+			return (-1);
+		return (0);
+	}
 	value_cpy = ft_strdup(value);
 	if (!value_cpy)
 		return (-1);
