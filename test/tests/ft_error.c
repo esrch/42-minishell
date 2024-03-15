@@ -31,18 +31,11 @@ static void	test_basic_ops(void)
 	assert_msg("Manual check: No leak");
 }
 
-static void	test_prefix(void)
-{
-	ft_error_prefix("Prefix");
-	assert_str_eq("Prefix is set", "Prefix", ft_error_prefix(NULL));
-}
-
 int	main(void)
 {
 	t_test_suite	test_suite;
 
 	test_suite_init(&test_suite, "FT_Error");
 	test_suite_add_test(&test_suite, "Basic operations", test_basic_ops);
-	test_suite_add_test(&test_suite, "Prefix", test_prefix);
 	test_suite_run(&test_suite);
 }

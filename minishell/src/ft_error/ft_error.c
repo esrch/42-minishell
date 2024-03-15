@@ -48,21 +48,6 @@ void	ft_error_reset(t_error *error)
 	error->msg = NULL;
 }
 
-/** Sets or gets the error prefix.
- * 
- * If prefix is NULL, returns the error prefix.
- * Otherwise, sets the prefix to the new value,
- * and returns the error prefix.
-*/
-char	*ft_error_prefix(char *prefix)
-{
-	static char	*internal_prefix = NULL;
-
-	if (prefix)
-		internal_prefix = prefix;
-	return (internal_prefix);
-}
-
 /** Checks if an error is set.
  * 
 */

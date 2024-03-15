@@ -1,9 +1,11 @@
 #include "hash_map.h"
 #include "hash_map_internal.h"
 
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "libft.h"
+#include "word_list.h"
 
 /** Creates a hash map.
  * 
@@ -66,28 +68,28 @@ void	hash_map_destroy(t_hash_map *map)
 char	**hash_map_keys(t_hash_map *map)
 {
 	char		**keys;
+	t_word_list	*keys_list;
 	size_t		table_index;
-	size_t		keys_index;
 	t_hash_elem	*elem;
 	
-	keys = ft_calloc(map->elem_count + 1, sizeof(*keys));
-	if (!keys)
-		return (NULL);
+	keys_list = NULL;
 	table_index = 0;
-	keys_index = 0;
 	while (table_index < map->table_size)
 	{
 		elem = map->table[table_index];
 		while (elem)
 		{
-			keys[keys_index] = ft_strdup(elem->key);
-			if (!keys[keys_index])
-				ft_free_2d_count((void ***) keys, keys_index);
-			keys_index++;
+			if (word_list_add_sorted(&keys_list, elem->key) != 0)
+			{
+				word_list_destroy(keys_list);
+				return (NULL);
+			}
 			elem = elem->next;
 		}
 		table_index++;
 	}
+	keys = word_list_to_arr(keys_list);
+	word_list_destroy(keys_list);
 	return (keys);
 }
 

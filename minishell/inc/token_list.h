@@ -17,5 +17,6 @@ int				token_list_add_word(t_token_list **list, char *value);
 void			token_list_destroy(t_token_list *list);
 size_t			token_list_len(t_token_list *list);
 t_token_list	*token_list_at(t_token_list *list, size_t index);
+void			token_list_print(t_token_list *list);
 
 #endif

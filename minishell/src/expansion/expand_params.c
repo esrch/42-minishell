@@ -1,6 +1,7 @@
 #include "expansion.h"
 #include "expansion_internal.h"
 
+#include "global.h"
 #include "hash_map.h"
 #include "libft.h"
 #include "scanner.h"
@@ -74,6 +75,23 @@ static int	add_param_value(char *param_value, t_word_list **segments)
 	return (status);
 }
 
+static int	add_last_exit_status(t_scanner *scanner, t_word_list **segments)
+{
+	char	*status_str;
+
+	scanner_skip(scanner);
+	status_str = ft_itoa(last_exit_status(-1));
+	if (!status_str)
+		return (-1);
+	if (word_list_add(segments, status_str) != 0)
+	{
+		free(status_str);
+		return (-1);
+	}
+	free(status_str);
+	return (0);
+}
+
 /** Extracts the characters already traversed,
  * then extracts the parameter value.
  * 
@@ -90,6 +108,8 @@ static int extract_param(t_scanner *scanner, t_word_list **segments,
 	if (!scanner_match(scanner, "$"))
 		return (0);
 	scanner_skip(scanner);
+	if (scanner_match(scanner, "?"))
+		return (add_last_exit_status(scanner, segments));
 	if (!ft_strchr("_" EXP_LETTERS, scanner_peek(scanner)))
 		return (0);
 	scanner_advance_while(scanner, "_" EXP_LETTERS);
@@ -139,22 +159,21 @@ static int	loop_src(t_scanner *scanner, t_word_list **segments,
 	return (0);
 }
 
-/** Replaces environment variables in a string and split the string
- * into words using whitespace.
+/** Replaces environment variables in a string.
  * 
  * Replaces any valid variable name outside single quotes
  * in the source string by the environment value (if found);
  * 
- * Returns the list of expanded and split words, or NULL on error.
+ * Returns the expanded string, or NULL on error.
 */
-t_word_list	*expand_params(char *src, t_hash_map *env)
+char	*expand_params(char *s, t_hash_map *env)
 {
 	char		*expanded;
 	t_word_list	*segments;
 	t_scanner	*scanner;
 	
 	segments = NULL;
-	scanner = scanner_create(src);
+	scanner = scanner_create(s);
 	if (!scanner)
 		return (NULL);
 	if (loop_src(scanner, &segments, env) != 0)
@@ -166,9 +185,26 @@ t_word_list	*expand_params(char *src, t_hash_map *env)
 	scanner_destroy(scanner);
 	expanded = word_list_to_str(segments);
 	word_list_destroy(segments);
+	return (expanded);
+}
+
+/** Replaces environment variables in a string and split the string
+ * into words using whitespace.
+ * 
+ * Replaces any valid variable name outside single quotes
+ * in the source string by the environment value (if found);
+ * 
+ * Returns the list of expanded and split words, or NULL on error.
+*/
+t_word_list	*expand_params_split(char *s, t_hash_map *env)
+{
+	char	*expanded;
+	t_word_list	*words;
+
+	expanded = expand_params(s, env);
 	if (!expanded)
 		return (NULL);
-	segments = expand_split_words(expanded);
+	words = expand_split_words(expanded);
 	free(expanded);
-	return (segments);
+	return (words);
 }

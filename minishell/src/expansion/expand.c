@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include "ast.h"
 #include "ft_error.h"
 #include "word_list.h"
 
@@ -59,7 +60,7 @@ t_word_list	*expand_word(char *word, char *dir_path, t_hash_map *env,
 	t_word_list	*current;
 
 	builder = NULL;
-	result = expand_params(word, env);
+	result = expand_params_split(word, env);
 	if (!result)
 		return (handle_expand_word_error(NULL, NULL, error));
 	current = result;
@@ -109,4 +110,30 @@ t_word_list	*expand_list(t_word_list *words, char *dir_path, t_hash_map *env,
 	}
 	word_list_remove_empty(&result);
 	return (result);
+}
+
+/** Expands the argv in a command node.
+ * 
+ * Errors:
+ * - System error.
+ * 
+ * Returns 0 on success, or -1 on error.
+*/
+int	expand_cmd_argv(t_ast_node *cmd_node, char *dir_path,
+	t_hash_map *env)
+{
+	t_error		*error;
+	t_word_list	*expanded_argv;
+
+	error = ft_error_create();
+	expanded_argv = expand_list(cmd_node->cmd_argv, dir_path, env, error);
+	if (ft_has_error(error))
+	{
+		ft_error_destroy(error);
+		return (-1);
+	}
+	ft_error_destroy(error);
+	word_list_destroy(cmd_node->cmd_argv);
+	cmd_node->cmd_argv = expanded_argv;
+	return (0);
 }

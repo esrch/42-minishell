@@ -2,6 +2,9 @@
 
 #include <stdlib.h>
 
+#include "libft.h"
+#include "token.h"
+
 /** Returns the length of the token list.
  * 
 */
@@ -33,4 +36,20 @@ t_token_list	*token_list_at(t_token_list *list, size_t index)
 		list = list->next;
 	}
 	return (list);
+}
+
+/** Prints the token list.
+ * 
+*/
+void	token_list_print(t_token_list *list)
+{
+	while (list)
+	{
+		token_print(list->token);
+		if (list->next)
+			ft_printf(" ");
+		else
+			ft_printf("\n");
+		list = list->next;
+	}
 }

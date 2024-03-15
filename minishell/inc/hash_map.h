@@ -1,6 +1,7 @@
 #ifndef HASH_MAP_H
 # define HASH_MAP_H
 
+# include <stdbool.h>
 # include <stdlib.h>
 
 # define MAX_LOAD_FACTOR 0.75

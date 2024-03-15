@@ -1,76 +1,71 @@
 #include <readline/readline.h>
-#include <stdlib.h>
-#include <signal.h>
 
 #include "ast.h"
 #include "env.h"
 #include "exec.h"
 #include "ft_error.h"
-#include "global.h"
+#include "heredoc_list.h"
 #include "libft.h"
 #include "parse.h"
-#include "redirection.h"
+#include "global.h"
 #include "token_list.h"
 #include "tokenize.h"
 
-static void	read_heredoc(t_ast_node *node, void *arg)
+static int	handle_init_error(void)
 {
-	(void) arg;
-	heredoc_read(node->redirections);
-}
-
-void	no_op(int signum)
-{
-	(void) signum;
-}
-
-void	setup_signal(void)
-{
-	signal(SIGINT, no_op);
-	signal(SIGQUIT, no_op);
+	ft_error_print_system(prog_name(NULL), NULL);
+	return (1);
 }
 
 int main(int argc, char **argv, char **envp)
 {
-	char			*cmd;
-	t_error			error;
-	t_token_list	*token_list;
+	char			*line;
+	t_error			*error;
+	t_token_list	*tokens;
 	t_ast_node		*ast;
+	t_heredoc_list	*heredocs;
+	int				heredoc_result;
 
 	(void) argc;
-
-	setup_signal();
-
-	error_init(&error);
-	global_init_prog_name(argv[0]);
+	(void) argv;
+	prog_name(argv[0]);
 	if (env_init(envp) != 0)
+		return (handle_init_error());
+	error = ft_error_create();
+	if (!error)
+		return (handle_init_error());
+	while (1)
 	{
-		error_print_system(NULL);
-		exit(1);
+		line = readline("minishell> ");
+		tokens = tokenize(line, error);
+		free(line);
+		if (ft_has_error(error))
+		{
+			ft_error_print(prog_name(NULL), NULL, error);
+			ft_error_reset(error);
+			continue ;
+		}
+		heredocs = NULL;
+		ast = parse(tokens, &heredocs, error);
+		token_list_destroy(tokens);
+		if (ft_has_error(error))
+		{
+			ft_error_print(prog_name(NULL), NULL, error);
+			ft_error_reset(error);
+			heredoc_list_destroy(heredocs);
+			continue ;
+		}
+		heredoc_result = heredoc_list_read(heredocs);
+		heredoc_list_destroy(heredocs);
+		if (heredoc_result != 0)
+		{
+			ast_destroy(ast);
+			if (heredoc_result == -1)
+				ft_error_print_system(prog_name(NULL), NULL);
+			continue ;
+		}
+		exec_ast(ast);
+		ast_destroy(ast);
 	}
-	cmd = readline("> ");
-	if (!cmd)
-	{
-		error_print_system(NULL);
-		exit(1);
-	}
-	token_list = tokenize(cmd, &error);
-	free(cmd);
-	if (has_error(&error))
-	{
-		error_print(&error);
-		error_clear(&error);
-		exit(1);
-	}
-	ast = parse(token_list, &error);
-	token_list_destroy(token_list);
-	if (has_error(&error))
-	{
-		error_print(&error);
-		error_clear(&error);
-		exit(1);
-	}
-	ast_foreach(ast, read_heredoc, NULL);
-	exec_ast(ast);
-	ast_destroy(ast);
+	ft_error_destroy(error);
 }
